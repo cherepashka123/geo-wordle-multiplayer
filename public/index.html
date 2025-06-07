@@ -1,0 +1,1209 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Geo Wordle Multiplayer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --neon-blue: #00f2fe;
+        --neon-cyan: #4facfe;
+        --dark-bg: #0a192f;
+        --darker-bg: #061024;
+        --accent: #64ffda;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(135deg, var(--darker-bg), var(--dark-bg));
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #e0e0e0;
+        min-height: 100vh;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 30px;
+        background: rgba(10, 25, 47, 0.7);
+        padding: 30px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 242, 254, 0.1);
+        max-width: 1200px;
+        width: 95%;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .container::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--neon-blue),
+          transparent
+        );
+        animation: scanline 2s linear infinite;
+      }
+
+      @keyframes scanline {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      h1 {
+        font-family: "Orbitron", sans-serif;
+        color: var(--neon-blue);
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px var(--neon-blue);
+        position: relative;
+      }
+
+      button {
+        cursor: pointer;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        background: rgba(0, 242, 254, 0.1);
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border: 1px solid var(--neon-blue);
+        position: relative;
+        overflow: hidden;
+      }
+
+      button:hover {
+        background: rgba(0, 242, 254, 0.2);
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .mode-selection {
+        background: rgba(10, 25, 47, 0.5);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      .mode-selection label {
+        margin-right: 20px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #e0e0e0;
+        transition: color 0.3s ease;
+      }
+
+      .mode-selection label:hover {
+        color: var(--neon-blue);
+      }
+
+      .mode-selection input[type="radio"] {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--neon-blue);
+        border-radius: 50%;
+        margin: 0;
+        position: relative;
+        transition: all 0.2s ease;
+      }
+
+      .mode-selection input[type="radio"]:checked {
+        background: var(--neon-blue);
+        box-shadow: 0 0 10px var(--neon-blue);
+      }
+
+      /* Avatar Modal */
+      #avatarModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(6, 16, 36, 0.95);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        background: rgba(10, 25, 47, 0.9);
+        padding: 30px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+        border: 1px solid var(--neon-blue);
+        box-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+      }
+
+      .modal-content h2 {
+        font-family: "Orbitron", sans-serif;
+        color: var(--neon-blue);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+      }
+
+      .avatar-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .avatar-option {
+        cursor: pointer;
+        padding: 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background: rgba(10, 25, 47, 0.5);
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      .avatar-option:hover {
+        transform: translateY(-5px);
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+      }
+
+      .avatar-option img {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .avatar-option.selected {
+        background: rgba(0, 242, 254, 0.1);
+        border-color: var(--neon-blue);
+      }
+
+      .avatar-option.selected img {
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+      }
+
+      /* player avatars */
+      #players {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .player {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(10, 25, 47, 0.5);
+        padding: 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      .player:hover {
+        transform: translateY(-5px);
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+      }
+
+      .player img {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        border: 2px solid var(--neon-blue);
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+      }
+
+      .player span {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: #e0e0e0;
+        font-family: "Orbitron", sans-serif;
+      }
+
+      /* Input styles */
+      input[type="text"] {
+        background: rgba(10, 25, 47, 0.5);
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        padding: 12px 20px;
+        border-radius: 4px;
+        color: #e0e0e0;
+        font-family: "Roboto", sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+      }
+
+      /* grid flip-cards */
+      #grid {
+        display: grid;
+        gap: 8px;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: repeat(var(--cols), 60px);
+        gap: 6px;
+      }
+
+      .cell {
+        perspective: 1000px;
+        width: 60px;
+        height: 60px;
+      }
+
+      .inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .cell.revealed .inner {
+        transform: rotateX(180deg);
+      }
+
+      .front,
+      .back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        backface-visibility: hidden;
+        border-radius: 4px;
+        font-family: "Orbitron", sans-serif;
+      }
+
+      .front {
+        background: rgba(10, 25, 47, 0.5);
+        color: #e0e0e0;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      .back {
+        transform: rotateX(180deg);
+        color: #fff;
+      }
+
+      .back.correct {
+        background: #388e3c;
+        border: 1px solid #4caf50;
+        box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+      }
+
+      .back.present {
+        background: #f57c00;
+        border: 1px solid #ff9800;
+        box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+      }
+
+      .back.absent {
+        background: #616161;
+        border: 1px solid #9e9e9e;
+        box-shadow: 0 0 15px rgba(158, 158, 158, 0.3);
+      }
+
+      /* keyboard */
+      #keyboard {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 6px;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(10, 25, 47, 0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      #keyboard button {
+        padding: 10px;
+        border-radius: 4px;
+        background: rgba(0, 242, 254, 0.1);
+        color: #e0e0e0;
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.9rem;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      #keyboard button:hover {
+        background: rgba(0, 242, 254, 0.2);
+        transform: translateY(-2px);
+      }
+
+      #keyboard button.correct {
+        background: #388e3c;
+        border-color: #4caf50;
+      }
+
+      #keyboard button.present {
+        background: #f57c00;
+        border-color: #ff9800;
+      }
+
+      #keyboard button.absent {
+        background: #616161;
+        border-color: #9e9e9e;
+      }
+
+      /* chat */
+      #chat {
+        background: rgba(10, 25, 47, 0.5);
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 100px);
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      #chat h2 {
+        font-family: "Orbitron", sans-serif;
+        color: var(--neon-blue);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      #messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        background: rgba(6, 16, 36, 0.8);
+        border-radius: 4px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+      }
+
+      #messages div {
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        background: rgba(10, 25, 47, 0.5);
+        border-radius: 4px;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      #messages div:hover {
+        border-color: var(--neon-blue);
+        transform: translateX(5px);
+      }
+
+      /* Status indicators */
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--neon-blue);
+        display: inline-block;
+        margin-right: 5px;
+        box-shadow: 0 0 10px var(--neon-blue);
+      }
+
+      /* Room code display */
+      #roomCode {
+        font-family: "Orbitron", sans-serif;
+        background: rgba(0, 242, 254, 0.1);
+        padding: 5px 15px;
+        border-radius: 4px;
+        border: 1px solid var(--neon-blue);
+        color: var(--neon-blue);
+        text-shadow: 0 0 5px var(--neon-blue);
+      }
+
+      /* Hint button */
+      #hintBtn {
+        background: rgba(0, 242, 254, 0.1);
+        border: 1px solid var(--neon-blue);
+        color: var(--neon-blue);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #hintBtn::before {
+        content: "⚡";
+      }
+
+      /* Message display */
+      #message {
+        font-family: "Orbitron", sans-serif;
+        color: var(--neon-blue);
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .hint-container {
+        background: rgba(10, 25, 47, 0.5);
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        text-align: center;
+      }
+
+      .location-hint {
+        margin-top: 15px;
+        padding: 10px;
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.9rem;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+      }
+
+      .location-hint.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .avatar-customization {
+        margin-top: 20px;
+      }
+
+      .avatar-customization h3 {
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        margin-bottom: 15px;
+      }
+
+      .customization-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .option-group {
+        text-align: center;
+      }
+
+      .option-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #e0e0e0;
+      }
+
+      .option-group select {
+        width: 100%;
+        padding: 8px;
+        background: rgba(10, 25, 47, 0.5);
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        color: #e0e0e0;
+        border-radius: 4px;
+        font-family: "Roboto", sans-serif;
+      }
+
+      .option-group select:focus {
+        border-color: var(--neon-blue);
+        outline: none;
+      }
+
+      /* Lobby Chat Styles */
+      .chat-container {
+        margin-top: 20px;
+        background: rgba(10, 25, 47, 0.5);
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+      }
+
+      .chat-container h3 {
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      #lobbyMessages,
+      #messages {
+        height: 200px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: rgba(6, 16, 36, 0.8);
+        border-radius: 4px;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+      }
+
+      .chat-message {
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        background: rgba(10, 25, 47, 0.5);
+        border-radius: 4px;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .chat-message:hover {
+        border-color: var(--neon-blue);
+        transform: translateX(5px);
+      }
+
+      .chat-message .timestamp {
+        font-size: 0.8em;
+        color: #666;
+        margin-left: 8px;
+      }
+
+      #lobbyChatInput,
+      #chatInput {
+        width: calc(100% - 20px);
+        padding: 8px;
+        margin-top: 10px;
+        background: rgba(10, 25, 47, 0.5);
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        color: #e0e0e0;
+        border-radius: 4px;
+      }
+
+      #lobbyChatInput:focus,
+      #chatInput:focus {
+        outline: none;
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Avatar Selection Modal -->
+    <div id="avatarModal">
+      <div class="modal-content">
+        <h2>Choose Your Avatar Style</h2>
+        <div class="avatar-options">
+          <div class="avatar-option" data-style="adventurer">
+            <img
+              src="https://api.dicebear.com/7.x/adventurer/svg?seed=sample"
+              alt="Adventurer"
+            />
+            <span>Adventurer</span>
+          </div>
+          <div class="avatar-option" data-style="pixel-art">
+            <img
+              src="https://api.dicebear.com/7.x/pixel-art/svg?seed=sample"
+              alt="Pixel Art"
+            />
+            <span>Pixel Art</span>
+          </div>
+          <div class="avatar-option" data-style="bottts">
+            <img
+              src="https://api.dicebear.com/7.x/bottts/svg?seed=sample"
+              alt="Robot"
+            />
+            <span>Robot</span>
+          </div>
+          <div class="avatar-option" data-style="lorelei">
+            <img
+              src="https://api.dicebear.com/7.x/lorelei/svg?seed=sample"
+              alt="Lorelei"
+            />
+            <span>Lorelei</span>
+          </div>
+        </div>
+        <div class="avatar-customization">
+          <h3>Customize Your Avatar</h3>
+          <div class="customization-options">
+            <div class="option-group">
+              <label>Background</label>
+              <select id="bgColor">
+                <option value="b6e3f4">Ocean Blue</option>
+                <option value="ffd5dc">Soft Pink</option>
+                <option value="d1d4f9">Sky Blue</option>
+                <option value="c0aede">Purple</option>
+                <option value="b6e3f4">Cyan</option>
+              </select>
+            </div>
+            <div class="option-group" id="adventurerOptions">
+              <label>Hair Style</label>
+              <select id="hairStyle">
+                <option value="short">Short</option>
+                <option value="long">Long</option>
+                <option value="bun">Bun</option>
+                <option value="pixie">Pixie</option>
+              </select>
+            </div>
+            <div class="option-group">
+              <label>Mood</label>
+              <select id="mood">
+                <option value="happy">Happy</option>
+                <option value="surprised">Surprised</option>
+                <option value="concerned">Concerned</option>
+                <option value="starstruck">Star-struck</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button id="confirmAvatar">Confirm Selection</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div>
+        <h1>Geo Wordle Multiplayer</h1>
+        <div id="lobby">
+          <div class="mode-selection">
+            <label
+              ><input type="radio" name="mode" value="countries" checked />
+              Countries</label
+            >
+            <label
+              ><input type="radio" name="mode" value="cities" /> Cities</label
+            >
+            <label><input type="radio" name="mode" value="both" /> Both</label>
+          </div>
+          <button id="createBtn">Create Room</button>
+          <input
+            id="roomInput"
+            type="text"
+            placeholder="Room Code"
+            maxlength="6"
+          />
+          <button id="joinBtn">Join Room</button>
+          <div id="lobbyMsg"></div>
+        </div>
+
+        <div id="game" style="display: none">
+          <!-- avatars panel -->
+          <div id="players"></div>
+          <p>Room: <span id="roomCode"></span></p>
+          <div class="hint-container">
+            <button id="hintBtn">⚡ REVEAL LETTER</button>
+            <div id="locationHint" class="location-hint"></div>
+          </div>
+          <div id="grid"></div>
+          <div id="keyboard"></div>
+          <div id="guessContainer">
+            <input
+              id="guessInput"
+              autocomplete="off"
+              placeholder="Type your guess"
+            />
+            <button id="submitBtn">Guess</button>
+          </div>
+          <div id="message"></div>
+        </div>
+      </div>
+
+      <div id="chat">
+        <h2>Chat</h2>
+        <div id="messages"></div>
+        <input id="chatInput" type="text" placeholder="Type & enter…" />
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // Initialize socket with debug logging
+      const socket = io({
+        reconnectionAttempts: 5,
+        timeout: 10000,
+      });
+
+      // Debug logging for all socket events
+      const originalEmit = socket.emit;
+      socket.emit = function () {
+        console.log(
+          "Emitting:",
+          arguments[0],
+          ...Array.from(arguments).slice(1)
+        );
+        originalEmit.apply(socket, arguments);
+      };
+
+      socket.onAny((eventName, ...args) => {
+        console.log("Received:", eventName, args);
+      });
+
+      // Game state
+      let wordLength, maxAttempts;
+      let avatars = {};
+      let yourId;
+      let selectedAvatarStyle = "adventurer";
+      let gameStarted = false;
+
+      // DOM Elements
+      const avatarModal = document.getElementById("avatarModal");
+      const avatarOptions = document.querySelectorAll(".avatar-option");
+      const confirmAvatarBtn = document.getElementById("confirmAvatar");
+      const createBtn = document.getElementById("createBtn");
+      const joinBtn = document.getElementById("joinBtn");
+      const messageEl = document.getElementById("message");
+      const lobbyEl = document.getElementById("lobby");
+      const gameEl = document.getElementById("game");
+
+      // Helper function to show messages
+      function showMessage(msg) {
+        messageEl.textContent = msg;
+        console.log("Message:", msg);
+      }
+
+      // Select first avatar option by default
+      avatarOptions[0].classList.add("selected");
+
+      // Update avatar customization based on style
+      function updateCustomizationOptions(style) {
+        const adventurerOpts = document.getElementById("adventurerOptions");
+        const hairStyleSelect = document.getElementById("hairStyle");
+        const moodSelect = document.getElementById("mood");
+
+        if (style === "adventurer") {
+          adventurerOpts.style.display = "block";
+          hairStyleSelect.disabled = false;
+        } else if (style === "bottts") {
+          adventurerOpts.style.display = "none";
+          hairStyleSelect.disabled = true;
+        } else if (style === "pixel-art") {
+          adventurerOpts.style.display = "block";
+          hairStyleSelect.disabled = false;
+        } else if (style === "lorelei") {
+          adventurerOpts.style.display = "block";
+          hairStyleSelect.disabled = false;
+        }
+      }
+
+      // Update avatar preview
+      function updateAvatarPreview() {
+        const style = selectedAvatarStyle;
+        const bg = document.getElementById("bgColor").value;
+        const hair = document.getElementById("hairStyle").value;
+        const mood = document.getElementById("mood").value;
+
+        let url = `https://api.dicebear.com/7.x/${style}/svg?seed=preview&backgroundColor=${bg}`;
+
+        // Add style-specific options
+        if (style === "adventurer") {
+          url += `&hair=${hair}&mouth=${mood}`;
+        } else if (style === "bottts") {
+          url += `&mood=${mood}`;
+        } else if (style === "pixel-art") {
+          url += `&hair=${hair}&mouth=${mood}`;
+        } else if (style === "lorelei") {
+          url += `&hair=${hair}&mouth=${mood}`;
+        }
+
+        document.querySelector(".avatar-option.selected img").src = url;
+      }
+
+      // Avatar style selection
+      avatarOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+          avatarOptions.forEach((opt) => opt.classList.remove("selected"));
+          option.classList.add("selected");
+          selectedAvatarStyle = option.dataset.style;
+          updateCustomizationOptions(selectedAvatarStyle);
+          updateAvatarPreview();
+          console.log("Selected avatar style:", selectedAvatarStyle);
+        });
+      });
+
+      // Create room
+      createBtn.addEventListener("click", () => {
+        if (!socket.connected) {
+          showMessage("Not connected to server. Please wait...");
+          return;
+        }
+        const mode = document.querySelector('input[name="mode"]:checked').value;
+        console.log("Creating room with mode:", mode);
+        showMessage(""); // Clear any previous messages
+        avatarModal.style.display = "flex";
+      });
+
+      // Join room
+      joinBtn.addEventListener("click", () => {
+        if (!socket.connected) {
+          showMessage("Not connected to server. Please wait...");
+          return;
+        }
+        const code = document.getElementById("roomInput").value.trim();
+        if (!code) {
+          showMessage("Please enter a room code");
+          return;
+        }
+        console.log("Joining room:", code);
+        showMessage(""); // Clear any previous messages
+        avatarModal.style.display = "flex";
+      });
+
+      // Confirm avatar and create/join room
+      confirmAvatarBtn.addEventListener("click", () => {
+        if (!socket.connected) {
+          showMessage("Not connected to server. Please wait...");
+          return;
+        }
+
+        const code = document
+          .getElementById("roomInput")
+          .value.trim()
+          .toUpperCase();
+        const avatarOptions = {
+          backgroundColor: document.getElementById("bgColor").value,
+          hair: document.getElementById("hairStyle").disabled
+            ? undefined
+            : document.getElementById("hairStyle").value,
+          mood: document.getElementById("mood").value,
+        };
+
+        avatarModal.style.display = "none";
+
+        if (code) {
+          console.log("Joining room with code:", code);
+          socket.emit("joinRoom", {
+            code,
+            avatarStyle: selectedAvatarStyle,
+            avatarOptions,
+          });
+        } else {
+          const mode = document.querySelector(
+            'input[name="mode"]:checked'
+          ).value;
+          console.log("Creating room with mode:", mode);
+          socket.emit("createRoom", {
+            mode,
+            avatarStyle: selectedAvatarStyle,
+            avatarOptions,
+          });
+        }
+      });
+
+      // Handle room creation response
+      socket.on("roomCreated", (data) => {
+        console.log("Room created:", data);
+        const code = data.code || data; // Handle both new and old response format
+        document.getElementById("lobbyMsg").textContent = `Room code: ${code}`;
+        document.getElementById("roomInput").value = code;
+
+        // Automatically join the created room
+        const avatarOptions = {
+          backgroundColor: document.getElementById("bgColor").value,
+          hair: document.getElementById("hairStyle").disabled
+            ? undefined
+            : document.getElementById("hairStyle").value,
+          mood: document.getElementById("mood").value,
+        };
+
+        socket.emit("joinRoom", {
+          code: code,
+          avatarStyle: selectedAvatarStyle,
+          avatarOptions: avatarOptions,
+        });
+      });
+
+      // Handle chat messages
+      socket.on("chatMessage", (message) => {
+        const messages = document.getElementById("messages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "chat-message";
+
+        // Format timestamp if it exists
+        const timeStr = message.timestamp
+          ? `<span class="timestamp">${new Date(
+              message.timestamp
+            ).toLocaleTimeString()}</span>`
+          : "";
+
+        messageDiv.innerHTML = `<strong>${message.user}:</strong> ${message.text} ${timeStr}`;
+        messages.appendChild(messageDiv);
+        messages.scrollTop = messages.scrollHeight;
+      });
+
+      // Handle chat input
+      const chatInput = document.getElementById("chatInput");
+      chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" && chatInput.value.trim()) {
+          socket.emit("chatMessage", chatInput.value.trim());
+          chatInput.value = "";
+        }
+      });
+
+      // Socket event handlers
+      socket.on("connect", () => {
+        console.log("Connected to server");
+        showMessage("");
+      });
+
+      socket.on("connect_error", (error) => {
+        console.error("Connection error:", error);
+        showMessage("Connection error. Please try again.");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Disconnected from server");
+        showMessage("Disconnected from server. Trying to reconnect...");
+      });
+
+      socket.on("errorMsg", (msg) => {
+        console.error("Error:", msg);
+        showMessage(msg);
+        if (msg.includes("Room")) {
+          lobbyEl.style.display = "block";
+          gameEl.style.display = "none";
+          gameStarted = false;
+        }
+      });
+
+      socket.on("joined", (data) => {
+        console.log("Joined room:", data);
+        wordLength = data.wordLength;
+        maxAttempts = data.maxAttempts;
+        avatars = data.avatars;
+        yourId = data.yourId;
+
+        document.getElementById("roomCode").textContent = data.code;
+        lobbyEl.style.display = "none";
+        gameEl.style.display = "block";
+        showMessage("");
+
+        // Show initial location hint
+        const hintEl = document.getElementById("locationHint");
+        hintEl.textContent = data.locationHint;
+        hintEl.classList.add("visible");
+
+        buildGrid();
+        buildKeyboard();
+        renderAvatars();
+        gameStarted = true;
+      });
+
+      socket.on("playerJoined", (data) => {
+        console.log("Player joined:", data);
+        avatars[data.id] = { seed: data.seed, style: data.style };
+        renderAvatars();
+      });
+
+      socket.on("playerLeft", (data) => {
+        console.log("Player left:", data);
+        delete avatars[data.id];
+        renderAvatars();
+      });
+
+      // Grid building
+      function buildGrid() {
+        console.log("Building grid with wordLength:", wordLength);
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        grid.style.setProperty("--cols", wordLength);
+
+        for (let r = 0; r < maxAttempts; r++) {
+          const row = document.createElement("div");
+          row.className = "row";
+          for (let c = 0; c < wordLength; c++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.innerHTML = `
+              <div class="inner">
+                <div class="front"></div>
+                <div class="back"></div>
+              </div>`;
+            row.appendChild(cell);
+          }
+          grid.appendChild(row);
+        }
+      }
+
+      // Keyboard building
+      function buildKeyboard() {
+        console.log("Building keyboard");
+        const kb = document.getElementById("keyboard");
+        kb.innerHTML = "";
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((l) => {
+          const btn = document.createElement("button");
+          btn.textContent = l;
+          btn.onclick = () => {
+            if (gameStarted) {
+              const input = document.getElementById("guessInput");
+              if (input.value.length < wordLength) {
+                input.value += l;
+              }
+            }
+          };
+          kb.appendChild(btn);
+        });
+      }
+
+      // Avatar rendering
+      function renderAvatars() {
+        console.log("Rendering avatars:", avatars);
+        const div = document.getElementById("players");
+        div.innerHTML = "";
+        Object.entries(avatars).forEach(([id, { seed, style, options }]) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "player";
+          const img = document.createElement("img");
+          const opts = options || {};
+          img.src = `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=${
+            opts.backgroundColor || "b6e3f4"
+          }&accessories=${opts.accessories || "sunglasses"}&clothing=${
+            opts.clothing || "hoodie"
+          }`;
+          img.alt = id;
+          const lbl = document.createElement("span");
+          lbl.textContent = id === yourId ? "YOU" : id.slice(0, 5);
+          addStatusToPlayer(wrapper, true);
+          wrapper.append(img, lbl);
+          div.append(wrapper);
+        });
+      }
+
+      // Status dot
+      function addStatusToPlayer(wrapper, isOnline) {
+        const dot = document.createElement("span");
+        dot.className = "status-dot";
+        dot.style.background = isOnline ? "#4CAF50" : "#9E9E9E";
+        wrapper.insertBefore(dot, wrapper.firstChild);
+      }
+
+      // Submit guess
+      document.getElementById("submitBtn").addEventListener("click", () => {
+        if (!gameStarted) {
+          showMessage("Game has not started yet");
+          return;
+        }
+        const guess = document
+          .getElementById("guessInput")
+          .value.trim()
+          .toUpperCase();
+        if (guess.length !== wordLength) {
+          showMessage(`Guess must be ${wordLength} letters`);
+          return;
+        }
+        socket.emit("makeGuess", guess);
+        document.getElementById("guessInput").value = "";
+      });
+
+      // Handle guess feedback
+      socket.on("feedback", ({ guess, feedback, player }) => {
+        console.log("Received feedback:", { guess, feedback, player });
+        const rows = Array.from(document.getElementById("grid").children);
+        const emptyRow = rows.find(
+          (r) => !r.querySelector(".front").textContent
+        );
+        if (emptyRow) {
+          feedback.forEach((status, i) => {
+            const cell = emptyRow.children[i];
+            const front = cell.querySelector(".front");
+            const back = cell.querySelector(".back");
+            front.textContent = guess[i];
+            back.textContent = guess[i];
+            back.className = `back ${status}`;
+            cell.classList.add("revealed");
+          });
+        }
+        if (player !== socket.id) {
+          showMessage(`Opponent guessed: ${guess}`);
+        }
+      });
+
+      // Handle game over
+      socket.on("gameOver", ({ winner, answer, locationHint }) => {
+        console.log("Game over:", { winner, answer, locationHint });
+        gameStarted = false;
+        showMessage(
+          winner === socket.id
+            ? "You win! 🎉"
+            : winner
+            ? "Opponent wins!"
+            : `Game Over! The answer was: ${answer}`
+        );
+
+        // Show final location hint
+        const hintEl = document.getElementById("locationHint");
+        hintEl.textContent = locationHint;
+        hintEl.classList.add("visible");
+      });
+
+      // Handle hints
+      document.getElementById("hintBtn").addEventListener("click", () => {
+        if (!gameStarted) {
+          showMessage("Game has not started yet");
+          return;
+        }
+        socket.emit("requestHint");
+      });
+
+      socket.on("hint", ({ index, letter, locationHint }) => {
+        console.log("Received hint:", { index, letter, locationHint });
+        const rows = Array.from(document.getElementById("grid").children);
+        rows.forEach((row) => {
+          const cell = row.children[index];
+          const front = cell.querySelector(".front");
+          if (!front.textContent) {
+            front.textContent = letter;
+            const back = cell.querySelector(".back");
+            back.textContent = letter;
+            back.classList.add("present");
+            cell.classList.add("revealed");
+          }
+        });
+
+        // Update location hint with animation
+        const hintEl = document.getElementById("locationHint");
+        hintEl.classList.remove("visible");
+        setTimeout(() => {
+          hintEl.textContent = locationHint;
+          hintEl.classList.add("visible");
+        }, 300);
+      });
+    </script>
+  </body>
+</html>
