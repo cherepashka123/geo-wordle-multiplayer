@@ -12,13 +12,14 @@ const server = http.createServer(app);
 // Configure Socket.IO with proper CORS for Vercel
 const io = new Server(server, {
   cors: {
-    origin: "*", // Be more permissive with CORS in development
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
   path: "/socket.io/",
   transports: ["websocket", "polling"],
-  allowEIO3: true, // Allow Engine.IO version 3 clients
+  allowEIO3: true,
+  serveClient: true,
 });
 
 // Error handling middleware
@@ -72,7 +73,7 @@ function chooseAnswer(mode) {
   let pool;
   if (mode === "countries") pool = countries;
   else if (mode === "cities") pool = capitalCities;
-  else pool = countries.concat(capitalCities);
+  else pool = [...countries, ...capitalCities];
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
@@ -92,7 +93,7 @@ function getLocationHint(answer) {
       "This country is famous for its wine, cheese, and the Louvre Museum.",
     ITALY: "This country is shaped like a boot and known for pasta.",
     BRAZIL: "This is the largest country in South America, home to the Amazon.",
-    AUSTRALIA: "This country is both a continent and home to kangaroos.",
+    SPAIN: "This country is known for tapas and flamenco dancing.",
   };
   return (
     hints[answer] ||
@@ -101,6 +102,7 @@ function getLocationHint(answer) {
 }
 
 io.on("connection", (socket) => {
+  console.log("New client connected:", socket.id);
   let currentRoom = null;
 
   // Send lobby messages on connection
@@ -123,6 +125,8 @@ io.on("connection", (socket) => {
   // 1) create room
   socket.on("createRoom", ({ mode, avatarStyle, avatarOptions }) => {
     try {
+      console.log("Creating room:", { mode, avatarStyle, avatarOptions });
+
       if (currentRoom) {
         socket.emit("errorMsg", "You are already in a room");
         return;
@@ -135,36 +139,40 @@ io.on("connection", (socket) => {
 
       const code = generateCode();
       const answer = chooseAnswer(mode);
-
-      console.log(`Creating room ${code} with answer: ${answer}`);
+      console.log(`Created room ${code} with answer: ${answer}`);
 
       rooms.set(code, {
         mode,
         answer,
         players: new Map([[socket.id, { avatarStyle, avatarOptions }]]),
-        attempts: new Map(),
+        attempts: new Map([[socket.id, []]]),
         hintedIndices: new Set(),
-        avatars: {},
+        avatars: {
+          [socket.id]: {
+            seed: Math.random().toString(36).substring(2, 10),
+            style: avatarStyle,
+            options: avatarOptions,
+          },
+        },
         messages: [],
       });
 
+      currentRoom = code;
+      socket.join(code);
       socket.emit("roomCreated", { code });
     } catch (error) {
       console.error("Error creating room:", error);
-      socket.emit("errorMsg", "Failed to create room. Please try again.");
+      socket.emit("errorMsg", "Failed to create room");
     }
   });
 
   // 2) join room
   socket.on("joinRoom", ({ code, avatarStyle, avatarOptions }) => {
     try {
+      console.log("Joining room:", { code, avatarStyle, avatarOptions });
+
       if (!code) {
         socket.emit("errorMsg", "Room code is required");
-        return;
-      }
-
-      if (currentRoom) {
-        socket.emit("errorMsg", "You are already in a room");
         return;
       }
 
@@ -174,11 +182,14 @@ io.on("connection", (socket) => {
         return;
       }
 
+      if (currentRoom && currentRoom !== code) {
+        socket.emit("errorMsg", "You are already in a different room");
+        return;
+      }
+
       currentRoom = code;
       room.players.set(socket.id, { avatarStyle, avatarOptions });
       room.attempts.set(socket.id, []);
-
-      // Store avatar info
       room.avatars[socket.id] = {
         seed: Math.random().toString(36).substring(2, 10),
         style: avatarStyle,
@@ -186,21 +197,18 @@ io.on("connection", (socket) => {
       };
 
       socket.join(code);
-
       console.log(`Player ${socket.id} joined room ${code}`);
 
-      // send join data + all current avatars + your own socket id
       socket.emit("joined", {
         code,
         wordLength: room.answer.length,
         maxAttempts: MAX_ATTEMPTS,
-        avatars: Object.fromEntries(room.players),
+        avatars: room.avatars,
         yourId: socket.id,
         locationHint: getLocationHint(room.answer),
         messages: room.messages,
       });
 
-      // notify others
       socket.to(code).emit("playerJoined", {
         id: socket.id,
         seed: room.avatars[socket.id].seed,
@@ -209,7 +217,7 @@ io.on("connection", (socket) => {
       });
     } catch (error) {
       console.error("Error joining room:", error);
-      socket.emit("errorMsg", "Failed to join room. Please try again.");
+      socket.emit("errorMsg", "Failed to join room");
     }
   });
 
@@ -230,115 +238,108 @@ io.on("connection", (socket) => {
 
   // 4) hint
   socket.on("requestHint", () => {
-    if (!currentRoom || !rooms.has(currentRoom)) {
-      socket.emit("errorMsg", "You are not in a room");
-      return;
-    }
-    const room = rooms.get(currentRoom);
-    const { answer, hintedIndices } = room;
-    const available = [...Array(answer.length).keys()].filter(
-      (i) => !hintedIndices.has(i)
-    );
-    if (!available.length) {
-      socket.emit("errorMsg", "No more hints available");
-      return;
-    }
-    const idx = available[Math.floor(Math.random() * available.length)];
-    hintedIndices.add(idx);
+    try {
+      if (!currentRoom || !rooms.has(currentRoom)) {
+        socket.emit("errorMsg", "You are not in a room");
+        return;
+      }
 
-    io.to(currentRoom).emit("hint", {
-      index: idx,
-      letter: answer[idx],
-      locationHint: getLocationHint(answer),
-    });
+      const room = rooms.get(currentRoom);
+      const { answer, hintedIndices } = room;
+      const available = [...Array(answer.length).keys()].filter(
+        (i) => !hintedIndices.has(i)
+      );
+
+      if (!available.length) {
+        socket.emit("errorMsg", "No more hints available");
+        return;
+      }
+
+      const idx = available[Math.floor(Math.random() * available.length)];
+      hintedIndices.add(idx);
+
+      io.to(currentRoom).emit("hint", {
+        index: idx,
+        letter: answer[idx],
+        locationHint: getLocationHint(answer),
+      });
+    } catch (error) {
+      console.error("Error requesting hint:", error);
+      socket.emit("errorMsg", "Failed to get hint");
+    }
   });
 
   // 5) guess
   socket.on("makeGuess", (guess) => {
-    if (!currentRoom || !rooms.has(currentRoom)) {
-      socket.emit("errorMsg", "You are not in a room");
-      return;
-    }
+    try {
+      if (!currentRoom || !rooms.has(currentRoom)) {
+        socket.emit("errorMsg", "You are not in a room");
+        return;
+      }
 
-    const room = rooms.get(currentRoom);
-    const { answer, mode } = room;
+      const room = rooms.get(currentRoom);
+      const { answer } = room;
 
-    if (!guess || typeof guess !== "string") {
-      socket.emit("errorMsg", "Invalid guess");
-      return;
-    }
+      if (!guess || typeof guess !== "string") {
+        socket.emit("errorMsg", "Invalid guess");
+        return;
+      }
 
-    guess = guess.toUpperCase().trim();
+      guess = guess.toUpperCase().trim();
 
-    if (guess.length !== answer.length) {
-      socket.emit("errorMsg", `Guess must be ${answer.length} letters`);
-      return;
-    }
+      if (guess.length !== answer.length) {
+        socket.emit("errorMsg", `Guess must be ${answer.length} letters`);
+        return;
+      }
 
-    const pool =
-      mode === "countries"
-        ? countries
-        : mode === "cities"
-        ? capitalCities
-        : countries.concat(capitalCities);
+      const attempts = room.attempts.get(socket.id);
+      attempts.push(guess);
 
-    if (!pool.includes(guess)) {
-      socket.emit(
-        "errorMsg",
-        `Invalid ${
-          mode === "both"
-            ? "location"
-            : mode === "countries"
-            ? "country"
-            : "capital city"
-        }`
-      );
-      return;
-    }
-
-    room.attempts.get(socket.id).push(guess);
-
-    const feedback = guess.split("").map((ch, i) => {
-      if (ch === answer[i]) return "correct";
-      if (answer.includes(ch)) return "present";
-      return "absent";
-    });
-
-    io.to(currentRoom).emit("feedback", {
-      guess,
-      feedback,
-      player: socket.id,
-    });
-
-    if (
-      guess === answer ||
-      room.attempts.get(socket.id).length >= MAX_ATTEMPTS
-    ) {
-      io.to(currentRoom).emit("gameOver", {
-        winner: guess === answer ? socket.id : null,
-        answer,
-        locationHint: getLocationHint(answer),
+      const feedback = guess.split("").map((ch, i) => {
+        if (ch === answer[i]) return "correct";
+        if (answer.includes(ch)) return "present";
+        return "absent";
       });
-      rooms.delete(currentRoom);
+
+      io.to(currentRoom).emit("feedback", {
+        guess,
+        feedback,
+        player: socket.id,
+      });
+
+      if (guess === answer || attempts.length >= MAX_ATTEMPTS) {
+        io.to(currentRoom).emit("gameOver", {
+          winner: guess === answer ? socket.id : null,
+          answer,
+          locationHint: getLocationHint(answer),
+        });
+        rooms.delete(currentRoom);
+      }
+    } catch (error) {
+      console.error("Error making guess:", error);
+      socket.emit("errorMsg", "Failed to process guess");
     }
   });
 
   // 6) disconnect cleanup
   socket.on("disconnect", () => {
-    if (!currentRoom || !rooms.has(currentRoom)) return;
+    try {
+      console.log("Client disconnected:", socket.id);
 
-    console.log(`Player ${socket.id} disconnected from room ${currentRoom}`);
+      if (currentRoom && rooms.has(currentRoom)) {
+        const room = rooms.get(currentRoom);
+        io.to(currentRoom).emit("playerLeft", { id: socket.id });
+        room.players.delete(socket.id);
+        room.attempts.delete(socket.id);
+        delete room.avatars[socket.id];
 
-    const room = rooms.get(currentRoom);
-    io.to(currentRoom).emit("playerLeft", { id: socket.id });
-    room.players.delete(socket.id);
-    room.attempts.delete(socket.id);
-    delete room.avatars[socket.id];
-
-    // Clean up empty rooms
-    if (!room.players.size) {
-      console.log(`Deleting empty room ${currentRoom}`);
-      rooms.delete(currentRoom);
+        if (room.players.size === 0) {
+          console.log(`Deleting empty room ${currentRoom}`);
+          rooms.delete(currentRoom);
+        }
+      }
+    } catch (error) {
+      console.error("Error handling disconnect:", error);
     }
   });
 
@@ -360,17 +361,22 @@ app.get("/", (req, res) => {
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV,
+  });
 });
 
-// Export for Vercel
-if (process.env.VERCEL) {
-  // In Vercel, we export the handler
-  module.exports = server;
-} else {
-  // Local development
+// Export the server
+module.exports = server;
+
+// Start server if not in Vercel
+if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3000;
   server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(
+      `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+    );
   });
 }

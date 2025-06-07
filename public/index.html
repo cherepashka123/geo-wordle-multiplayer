@@ -304,126 +304,139 @@
       /* grid flip-cards */
       #grid {
         display: grid;
-        gap: 8px;
-        justify-content: center;
-        margin: 30px 0;
-        padding: 20px;
-        background: rgba(10, 25, 47, 0.5);
-        border-radius: 12px;
-        border: 1px solid rgba(0, 242, 254, 0.2);
+        grid-template-columns: repeat(var(--cols), 1fr);
+        gap: 5px;
+        margin: 20px auto;
+        max-width: 600px;
+        padding: 10px;
       }
 
       .row {
-        display: grid;
-        grid-template-columns: repeat(var(--cols), 65px);
-        gap: 8px;
+        display: contents;
       }
 
       .cell {
+        aspect-ratio: 1;
         perspective: 1000px;
-        width: 65px;
-        height: 65px;
+        cursor: default;
+        min-width: 60px;
+        min-height: 60px;
       }
 
-      .inner {
+      .cell .inner {
+        position: relative;
         width: 100%;
         height: 100%;
-        position: relative;
+        text-align: center;
+        transition: transform 0.6s;
         transform-style: preserve-3d;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .cell.revealed .inner {
         transform: rotateX(180deg);
       }
 
-      .front,
-      .back {
+      .cell .front,
+      .cell .back {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
+        font-size: 2em;
         font-weight: bold;
         text-transform: uppercase;
-        backface-visibility: hidden;
+        border: 2px solid rgba(0, 242, 254, 0.2);
         border-radius: 4px;
-        font-family: "Orbitron", sans-serif;
+        background: rgba(10, 25, 47, 0.7);
+        min-width: 60px;
+        min-height: 60px;
       }
 
-      .front {
-        background: rgba(10, 25, 47, 0.5);
-        color: #e0e0e0;
-        border: 1px solid rgba(0, 242, 254, 0.2);
+      .cell .front {
+        color: var(--neon-blue);
       }
 
-      .back {
+      .cell .back {
         transform: rotateX(180deg);
         color: #fff;
       }
 
-      .back.correct {
-        background: #388e3c;
-        border: 1px solid #4caf50;
-        box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+      .cell .back.correct {
+        background: #4caf50;
+        border-color: #2e7d32;
       }
 
-      .back.present {
-        background: #f57c00;
-        border: 1px solid #ff9800;
-        box-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+      .cell .back.present {
+        background: #ffc107;
+        border-color: #ffa000;
       }
 
-      .back.absent {
-        background: #616161;
-        border: 1px solid #9e9e9e;
-        box-shadow: 0 0 15px rgba(158, 158, 158, 0.3);
+      .cell .back.absent {
+        background: #9e9e9e;
+        border-color: #616161;
       }
 
       /* keyboard */
       #keyboard {
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        gap: 6px;
-        margin: 20px 0;
-        padding: 15px;
-        background: rgba(10, 25, 47, 0.5);
-        border-radius: 8px;
-        border: 1px solid rgba(0, 242, 254, 0.2);
-      }
-
-      #keyboard button {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 20px auto;
+        max-width: 800px;
         padding: 10px;
-        border-radius: 4px;
-        background: rgba(0, 242, 254, 0.1);
-        color: #e0e0e0;
-        font-family: "Orbitron", sans-serif;
-        font-size: 0.9rem;
-        border: 1px solid rgba(0, 242, 254, 0.2);
       }
 
-      #keyboard button:hover {
+      .keyboard-row {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .key {
+        min-width: 45px;
+        height: 60px;
+        border-radius: 4px;
+        border: none;
+        background: rgba(0, 242, 254, 0.1);
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.2em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        padding: 0 15px;
+      }
+
+      .key:hover {
         background: rgba(0, 242, 254, 0.2);
         transform: translateY(-2px);
       }
 
-      #keyboard button.correct {
-        background: #388e3c;
-        border-color: #4caf50;
+      .wide-key {
+        min-width: 80px;
+        font-size: 0.9em;
       }
 
-      #keyboard button.present {
-        background: #f57c00;
-        border-color: #ff9800;
+      .key.state-correct {
+        background: #4caf50;
+        border-color: #2e7d32;
+        color: white;
       }
 
-      #keyboard button.absent {
-        background: #616161;
-        border-color: #9e9e9e;
+      .key.state-present {
+        background: #ffc107;
+        border-color: #ffa000;
+        color: white;
+      }
+
+      .key.state-absent {
+        background: #9e9e9e;
+        border-color: #616161;
+        color: white;
       }
 
       /* chat */
@@ -659,62 +672,31 @@
         box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
       }
 
-      /* Enhanced guess input section */
+      /* guess input */
       #guessContainer {
-        margin: 30px 0;
-        padding: 20px;
-        background: rgba(10, 25, 47, 0.7);
-        border-radius: 12px;
-        border: 1px solid rgba(0, 242, 254, 0.2);
         display: flex;
-        gap: 15px;
-        align-items: center;
-        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.1);
+        gap: 10px;
+        margin: 20px auto;
+        max-width: 600px;
+        padding: 10px;
       }
 
       #guessInput {
         flex: 1;
         padding: 15px 20px;
-        font-size: 1.2rem;
-        background: rgba(6, 16, 36, 0.8);
-        border: 2px solid rgba(0, 242, 254, 0.3);
-        border-radius: 8px;
-        color: #e0e0e0;
+        font-size: 1.4em;
+        background: rgba(10, 25, 47, 0.7);
+        border: 2px solid rgba(0, 242, 254, 0.2);
+        border-radius: 4px;
+        color: var(--neon-blue);
         font-family: "Orbitron", sans-serif;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-      }
-
-      #guessInput:focus {
-        outline: none;
-        border-color: var(--neon-blue);
-        box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
-        transform: translateY(-2px);
-      }
-
-      #guessInput::placeholder {
-        color: rgba(224, 224, 224, 0.5);
+        min-height: 60px;
       }
 
       #submitBtn {
         padding: 15px 30px;
-        font-size: 1.1rem;
-        background: rgba(0, 242, 254, 0.1);
-        border: 2px solid var(--neon-blue);
-        color: var(--neon-blue);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: "Orbitron", sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        white-space: nowrap;
-      }
-
-      #submitBtn:hover {
-        background: rgba(0, 242, 254, 0.2);
-        transform: translateY(-2px);
-        box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        font-size: 1.2em;
+        min-width: 120px;
       }
 
       /* Make the game container scrollable if needed */
@@ -1003,6 +985,19 @@
         align-items: center;
         width: 100%;
       }
+
+      .winning-row .cell .back {
+        animation: celebrate 0.5s ease-in-out infinite alternate;
+      }
+
+      @keyframes celebrate {
+        from {
+          transform: rotateX(180deg) scale(1);
+        }
+        to {
+          transform: rotateX(180deg) scale(1.1);
+        }
+      }
     </style>
   </head>
   <body>
@@ -1162,44 +1157,27 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      // Initialize socket with debug logging
+      // Initialize socket connection
       const socket = io({
         reconnectionAttempts: 5,
         timeout: 10000,
-      });
-
-      // Debug logging for all socket events
-      const originalEmit = socket.emit;
-      socket.emit = function () {
-        console.log(
-          "Emitting:",
-          arguments[0],
-          ...Array.from(arguments).slice(1)
-        );
-        originalEmit.apply(socket, arguments);
-      };
-
-      socket.onAny((eventName, ...args) => {
-        console.log("Received:", eventName, args);
+        transports: ["websocket", "polling"],
       });
 
       // Game state
-      let wordLength, maxAttempts;
+      let wordLength;
+      let maxAttempts;
       let avatars = {};
       let yourId;
       let selectedAvatarStyle = "adventurer";
       let gameStarted = false;
-
-      // Avatar and customization state
-      let currentBgColor = "b6e3f4";
-      let currentMood = "happy";
+      let currentRoom = null;
 
       // DOM Elements
-      const avatarModal = document.getElementById("avatarModal");
-      const avatarOptions = document.querySelectorAll(".avatar-option");
-      const confirmAvatarBtn = document.getElementById("confirmAvatar");
       const createBtn = document.getElementById("createBtn");
       const joinBtn = document.getElementById("joinBtn");
+      const confirmAvatarBtn = document.getElementById("confirmAvatar");
+      const avatarModal = document.getElementById("avatarModal");
       const messageEl = document.getElementById("message");
       const lobbyEl = document.getElementById("lobby");
       const gameEl = document.getElementById("game");
@@ -1210,494 +1188,120 @@
         console.log("Message:", msg);
       }
 
-      // Simplified avatar selection and game flow
-      document.addEventListener("DOMContentLoaded", function () {
-        const createBtn = document.getElementById("createBtn");
-        const joinBtn = document.getElementById("joinBtn");
-        const confirmBtn = document.getElementById("confirmAvatar");
-        const avatarModal = document.getElementById("avatarModal");
-        const lobbyDiv = document.getElementById("lobby");
-        const gameDiv = document.getElementById("game");
-        let selectedAvatarStyle = "adventurer";
+      // Create room button handler
+      createBtn.addEventListener("click", function () {
+        console.log("Create room button clicked");
+        if (!socket.connected) {
+          showMessage("Not connected to server. Please try again.");
+          return;
+        }
+        // Clear room input and show avatar modal
+        document.getElementById("roomInput").value = "";
+        avatarModal.style.display = "flex";
 
-        // Create room button
-        createBtn.onclick = function () {
-          if (!socket.connected) {
-            showMessage("Not connected to server. Please wait...");
-            return;
-          }
-          avatarModal.style.display = "flex";
-        };
+        // Pre-select the first avatar if none selected
+        if (!document.querySelector(".avatar-option.selected")) {
+          document.querySelector(".avatar-option").click();
+        }
+      });
 
-        // Join room button
-        joinBtn.onclick = function () {
-          if (!socket.connected) {
-            showMessage("Not connected to server. Please wait...");
-            return;
-          }
-          const code = document.getElementById("roomInput").value.trim();
-          if (!code) {
-            showMessage("Please enter a room code");
-            return;
-          }
-          avatarModal.style.display = "flex";
-        };
+      // Join room button handler
+      joinBtn.addEventListener("click", function () {
+        console.log("Join room button clicked");
+        if (!socket.connected) {
+          showMessage("Not connected to server. Please try again.");
+          return;
+        }
+        const code = document
+          .getElementById("roomInput")
+          .value.trim()
+          .toUpperCase();
+        if (!code) {
+          showMessage("Please enter a room code");
+          return;
+        }
+        avatarModal.style.display = "flex";
 
-        // Avatar selection
-        const avatarOptions = document.querySelectorAll(".avatar-option");
-        avatarOptions.forEach((option) => {
-          option.onclick = function () {
-            avatarOptions.forEach((opt) => {
-              opt.style.border = "2px solid rgba(0, 242, 254, 0.2)";
-              opt.style.boxShadow = "none";
-              opt.classList.remove("selected");
-            });
-            this.style.border = "2px solid var(--neon-blue)";
-            this.style.boxShadow = "0 0 20px rgba(0, 242, 254, 0.3)";
-            this.classList.add("selected");
-            selectedAvatarStyle = this.dataset.style;
-          };
-        });
+        // Pre-select the first avatar if none selected
+        if (!document.querySelector(".avatar-option.selected")) {
+          document.querySelector(".avatar-option").click();
+        }
+      });
 
-        // Select first avatar by default
-        avatarOptions[0].click();
-
-        // Customization handlers
-        const bgColorSelect = document.getElementById("bgColor");
-        const moodSelect = document.getElementById("mood");
-
-        function updateSelectedAvatar() {
-          const selectedAvatar = document.querySelector(
-            ".avatar-option.selected"
-          );
-          if (!selectedAvatar) return;
-
-          const img = selectedAvatar.querySelector("img");
-          const params = new URLSearchParams({
-            seed: getAvatarSeed(selectedAvatarStyle),
-            backgroundColor: bgColorSelect.value,
-            eyes: moodSelect.value === "happy" ? "happy" : "round",
-            radius: "10",
-            scale: "90",
-            mouthProbability: "100",
-            primaryColorLevel: "600",
-            secondaryColorLevel: "400",
-            sidesCount: getAvatarSides(selectedAvatarStyle),
+      // Avatar selection
+      document.querySelectorAll(".avatar-option").forEach(function (option) {
+        option.addEventListener("click", function () {
+          // Remove selection from all options
+          document.querySelectorAll(".avatar-option").forEach(function (opt) {
+            opt.classList.remove("selected");
+            opt.style.border = "2px solid rgba(0, 242, 254, 0.2)";
+            opt.style.boxShadow = "none";
           });
 
-          img.src = `https://api.dicebear.com/7.x/bottts/svg?${params.toString()}`;
+          // Add selection to clicked option
+          this.classList.add("selected");
+          this.style.border = "2px solid var(--neon-blue)";
+          this.style.boxShadow = "0 0 20px rgba(0, 242, 254, 0.3)";
+          selectedAvatarStyle = this.dataset.style;
+
+          // Update avatar preview
+          updateSelectedAvatar();
+        });
+      });
+
+      // Confirm avatar selection
+      confirmAvatarBtn.addEventListener("click", function () {
+        console.log("Confirm avatar button clicked");
+        const code = document
+          .getElementById("roomInput")
+          .value.trim()
+          .toUpperCase();
+        const bgColorSelect = document.getElementById("bgColor");
+        const moodSelect = document.getElementById("mood");
+        const avatarOptions = {
+          backgroundColor: bgColorSelect.value,
+          mood: moodSelect.value,
+        };
+
+        const selectedAvatar = document.querySelector(
+          ".avatar-option.selected"
+        );
+        if (!selectedAvatar) {
+          showMessage("Please select an avatar");
+          return;
         }
 
-        bgColorSelect.onchange = updateSelectedAvatar;
-        moodSelect.onchange = updateSelectedAvatar;
-
-        // Socket event handlers
-        socket.on("roomCreated", function (data) {
-          console.log("Room created:", data);
-          const code = data.code || data;
-          document.getElementById("roomCode").textContent = code;
-          document.getElementById("roomInput").value = code;
-
-          const avatarOptions = {
-            backgroundColor: bgColorSelect.value,
-            mood: moodSelect.value,
-          };
-
+        if (code) {
+          console.log(
+            "Joining room:",
+            code,
+            selectedAvatarStyle,
+            avatarOptions
+          );
           socket.emit("joinRoom", {
             code,
             avatarStyle: selectedAvatarStyle,
             avatarOptions,
           });
-        });
-
-        socket.on("joined", function (data) {
-          console.log("Joined room:", data);
-          wordLength = data.wordLength;
-          maxAttempts = data.maxAttempts;
-          avatars = data.avatars;
-          yourId = data.yourId;
-
-          // Update displays
-          document.getElementById("roomCode").textContent = data.code;
-
-          // Hide lobby and modal, show game
-          lobbyDiv.style.display = "none";
-          avatarModal.style.display = "none";
-          gameDiv.style.display = "block";
-
-          // Clear any messages
-          showMessage("");
-
-          // Show hint if available
-          if (data.locationHint) {
-            const hintEl = document.getElementById("locationHint");
-            hintEl.textContent = data.locationHint;
-            hintEl.classList.add("visible");
-          }
-
-          // Initialize game
-          buildGrid();
-          buildKeyboard();
-          renderAvatars();
-          gameStarted = true;
-        });
-
-        // Confirm avatar selection
-        confirmBtn.onclick = function () {
-          const code = document
-            .getElementById("roomInput")
-            .value.trim()
-            .toUpperCase();
-          const avatarOptions = {
-            backgroundColor: bgColorSelect.value,
-            mood: moodSelect.value,
-          };
-
-          if (code) {
-            console.log(
-              "Joining room:",
-              code,
-              selectedAvatarStyle,
-              avatarOptions
-            );
-            socket.emit("joinRoom", {
-              code,
-              avatarStyle: selectedAvatarStyle,
-              avatarOptions,
-            });
-          } else {
-            const mode = document.querySelector(
-              'input[name="mode"]:checked'
-            ).value;
-            console.log(
-              "Creating room:",
-              mode,
-              selectedAvatarStyle,
-              avatarOptions
-            );
-            socket.emit("createRoom", {
-              mode,
-              avatarStyle: selectedAvatarStyle,
-              avatarOptions,
-            });
-          }
-        };
-
-        // Error handling
-        socket.on("errorMsg", function (msg) {
-          console.error("Error:", msg);
-          showMessage(msg);
-
-          if (msg.includes("Room")) {
-            lobbyDiv.style.display = "block";
-            gameDiv.style.display = "none";
-            avatarModal.style.display = "none";
-            gameStarted = false;
-          }
-        });
-
-        // Helper functions
-        function getAvatarSeed(style) {
-          switch (style) {
-            case "adventurer":
-              return "MashaBunny";
-            case "pixel-art":
-              return "SashaDino";
-            case "lorelei":
-              return "NatashaSwan";
-            case "bottts":
-              return "SergikTurtle";
-            default:
-              return style;
-          }
-        }
-
-        function getAvatarSides(style) {
-          switch (style) {
-            case "adventurer":
-              return "8";
-            case "pixel-art":
-              return "5";
-            case "lorelei":
-              return "4";
-            case "bottts":
-              return "6";
-            default:
-              return "6";
-          }
-        }
-
-        // Update the renderAvatars function
-        window.renderAvatars = function () {
-          const div = document.getElementById("players");
-          div.innerHTML = "";
-
-          Object.entries(avatars).forEach(([id, { style, options }]) => {
-            const wrapper = document.createElement("div");
-            wrapper.className = "player";
-
-            const img = document.createElement("img");
-            const params = new URLSearchParams({
-              seed: getAvatarSeed(style),
-              backgroundColor: options?.backgroundColor || "b6e3f4",
-              eyes: options?.mood === "happy" ? "happy" : "round",
-              radius: "10",
-              scale: "90",
-              mouthProbability: "100",
-              primaryColorLevel: "600",
-              secondaryColorLevel: "400",
-              sidesCount: getAvatarSides(style),
-            });
-
-            img.src = `https://api.dicebear.com/7.x/bottts/svg?${params.toString()}`;
-            img.alt = id;
-
-            const lbl = document.createElement("span");
-            const playerName =
-              Object.entries(playerNames).find(
-                ([name, s]) => s === style
-              )?.[0] || id.slice(0, 5);
-            lbl.textContent =
-              id === yourId ? `YOU (${playerName})` : playerName;
-
-            addStatusToPlayer(wrapper, true);
-            wrapper.append(img, lbl);
-            div.append(wrapper);
-          });
-        };
-      });
-
-      // Predefined player names
-      const playerNames = {
-        Masha: "adventurer",
-        Sasha: "pixel-art",
-        Natasha: "lorelei",
-        SergikTurtle: "bottts",
-      };
-
-      // Status dot
-      function addStatusToPlayer(wrapper, isOnline) {
-        const dot = document.createElement("span");
-        dot.className = "status-dot";
-        dot.style.background = isOnline ? "#4CAF50" : "#9E9E9E";
-        wrapper.insertBefore(dot, wrapper.firstChild);
-      }
-
-      // Submit guess
-      document.getElementById("submitBtn").addEventListener("click", () => {
-        if (!gameStarted) {
-          showMessage("Game has not started yet");
-          return;
-        }
-        const guess = document
-          .getElementById("guessInput")
-          .value.trim()
-          .toUpperCase();
-        if (guess.length !== wordLength) {
-          showMessage(`Guess must be ${wordLength} letters`);
-          return;
-        }
-        socket.emit("makeGuess", guess);
-        document.getElementById("guessInput").value = "";
-      });
-
-      // Handle guess feedback
-      socket.on("feedback", ({ guess, feedback, player }) => {
-        console.log("Received feedback:", { guess, feedback, player });
-        const rows = Array.from(document.getElementById("grid").children);
-        const emptyRow = rows.find(
-          (r) => !r.querySelector(".front").textContent
-        );
-        if (emptyRow) {
-          feedback.forEach((status, i) => {
-            const cell = emptyRow.children[i];
-            const front = cell.querySelector(".front");
-            const back = cell.querySelector(".back");
-            front.textContent = guess[i];
-            back.textContent = guess[i];
-            back.className = `back ${status}`;
-            cell.classList.add("revealed");
+        } else {
+          const mode = document.querySelector(
+            'input[name="mode"]:checked'
+          ).value;
+          console.log(
+            "Creating room:",
+            mode,
+            selectedAvatarStyle,
+            avatarOptions
+          );
+          socket.emit("createRoom", {
+            mode,
+            avatarStyle: selectedAvatarStyle,
+            avatarOptions,
           });
         }
-        if (player !== socket.id) {
-          showMessage(`Opponent guessed: ${guess}`);
-        }
       });
 
-      // Add winning celebration effects
-      function createConfetti() {
-        for (let i = 0; i < 50; i++) {
-          const confetti = document.createElement("div");
-          confetti.className = "confetti";
-          confetti.style.left = Math.random() * window.innerWidth + "px";
-          confetti.style.top = -10 + "px";
-          confetti.style.backgroundColor = ["#00f2fe", "#4facfe", "#64ffda"][
-            Math.floor(Math.random() * 3)
-          ];
-          confetti.style.animation = `celebrationConfetti ${
-            1 + Math.random() * 2
-          }s linear forwards`;
-          document.body.appendChild(confetti);
-
-          // Remove confetti after animation
-          setTimeout(() => confetti.remove(), 3000);
-        }
-      }
-
-      // Update game over handling
-      socket.on("gameOver", ({ winner, answer, locationHint }) => {
-        console.log("Game over:", { winner, answer, locationHint });
-        gameStarted = false;
-
-        if (winner) {
-          // Add winning animation to the last row
-          const rows = Array.from(document.getElementById("grid").children);
-          const lastPlayedRow = rows.find(
-            (row) =>
-              row.querySelector(".cell.revealed") &&
-              !row.nextElementSibling?.querySelector(".cell.revealed")
-          );
-          if (lastPlayedRow) {
-            lastPlayedRow.classList.add("winning-row");
-          }
-
-          // Create celebration effect
-          if (winner === socket.id) {
-            createConfetti();
-            showMessage("🎉 Congratulations! You won! 🎉");
-          } else {
-            const winnerName =
-              Object.entries(playerNames).find(
-                ([name, style]) => avatars[winner]?.style === style
-              )?.[0] || winner.slice(0, 5);
-            showMessage(`${winnerName} wins! The answer was: ${answer}`);
-          }
-        } else {
-          showMessage(`Game Over! The answer was: ${answer}`);
-        }
-
-        // Show final location hint
-        const hintEl = document.getElementById("locationHint");
-        hintEl.textContent = locationHint;
-        hintEl.classList.add("visible");
-      });
-
-      // Handle hints
-      document.getElementById("hintBtn").addEventListener("click", () => {
-        if (!gameStarted) {
-          showMessage("Game has not started yet");
-          return;
-        }
-        socket.emit("requestHint");
-      });
-
-      socket.on("hint", ({ index, letter, locationHint }) => {
-        console.log("Received hint:", { index, letter, locationHint });
-        const rows = Array.from(document.getElementById("grid").children);
-        rows.forEach((row) => {
-          const cell = row.children[index];
-          const front = cell.querySelector(".front");
-          if (!front.textContent) {
-            front.textContent = letter;
-            const back = cell.querySelector(".back");
-            back.textContent = letter;
-            back.classList.add("present");
-            cell.classList.add("revealed");
-          }
-        });
-
-        // Update location hint with animation
-        const hintEl = document.getElementById("locationHint");
-        hintEl.classList.remove("visible");
-        setTimeout(() => {
-          hintEl.textContent = locationHint;
-          hintEl.classList.add("visible");
-        }, 300);
-      });
-
-      // Update the existing script to handle stats
-      let gameStats = {
-        gamesPlayed: 0,
-        bestStreak: 0,
-        currentStreak: 0,
-        totalAttempts: 0,
-        gamesWon: 0,
-      };
-
-      // Load stats from localStorage if available
-      try {
-        const savedStats = localStorage.getItem("geoWordleStats");
-        if (savedStats) {
-          gameStats = JSON.parse(savedStats);
-          updateStatsDisplay();
-        }
-      } catch (e) {
-        console.error("Error loading stats:", e);
-      }
-
-      function updateStatsDisplay() {
-        const statsElements = document.querySelectorAll(".stat-value");
-        statsElements[0].textContent = gameStats.gamesPlayed;
-        statsElements[1].textContent = gameStats.bestStreak;
-        statsElements[2].textContent =
-          gameStats.gamesPlayed > 0
-            ? (gameStats.totalAttempts / gameStats.gamesPlayed).toFixed(1)
-            : "-";
-      }
-
-      // Update game over handling to include stats
-      socket.on("gameOver", ({ winner, answer, locationHint }) => {
-        console.log("Game over:", { winner, answer, locationHint });
-        gameStarted = false;
-
-        // Update stats
-        gameStats.gamesPlayed++;
-        if (winner === socket.id) {
-          gameStats.gamesWon++;
-          gameStats.currentStreak++;
-          gameStats.bestStreak = Math.max(
-            gameStats.bestStreak,
-            gameStats.currentStreak
-          );
-          createConfetti();
-          showMessage("🎉 Congratulations! You won! 🎉");
-        } else {
-          gameStats.currentStreak = 0;
-          const winnerName =
-            Object.entries(playerNames).find(
-              ([name, style]) => avatars[winner]?.style === style
-            )?.[0] || winner.slice(0, 5);
-          showMessage(`${winnerName} wins! The answer was: ${answer}`);
-        }
-
-        // Update attempts
-        const currentAttempts = rooms[currentRoom]?.attempts[socket.id] || 0;
-        gameStats.totalAttempts += currentAttempts;
-
-        // Save stats
-        localStorage.setItem("geoWordleStats", JSON.stringify(gameStats));
-        updateStatsDisplay();
-
-        // Show final hint and animations
-        const hintEl = document.getElementById("locationHint");
-        hintEl.textContent = locationHint;
-        hintEl.classList.add("visible");
-
-        // Add winning animations if applicable
-        if (winner) {
-          const rows = Array.from(document.getElementById("grid").children);
-          const lastPlayedRow = rows.find(
-            (row) =>
-              row.querySelector(".cell.revealed") &&
-              !row.nextElementSibling?.querySelector(".cell.revealed")
-          );
-          if (lastPlayedRow) {
-            lastPlayedRow.classList.add("winning-row");
-          }
-        }
-      });
-
-      // Socket connection handlers
+      // Socket event handlers
       socket.on("connect", () => {
         console.log("Connected to server");
         showMessage("");
@@ -1713,47 +1317,94 @@
         showMessage("Disconnected from server. Trying to reconnect...");
       });
 
-      // Player join/leave handlers
-      socket.on("playerJoined", (data) => {
-        console.log("Player joined:", data);
-        avatars[data.id] = { seed: data.seed, style: data.style };
+      socket.on("roomCreated", function (data) {
+        console.log("Room created:", data);
+        const code = data.code || data;
+        document.getElementById("roomCode").textContent = code;
+        document.getElementById("roomInput").value = code;
+        currentRoom = code;
+
+        // Get current avatar options
+        const bgColorSelect = document.getElementById("bgColor");
+        const moodSelect = document.getElementById("mood");
+        const avatarOptions = {
+          backgroundColor: bgColorSelect.value,
+          mood: moodSelect.value,
+        };
+
+        // Join the room immediately after creating
+        socket.emit("joinRoom", {
+          code,
+          avatarStyle: selectedAvatarStyle,
+          avatarOptions,
+        });
+      });
+
+      socket.on("joined", function (data) {
+        console.log("Joined room:", data);
+        wordLength = data.wordLength;
+        maxAttempts = data.maxAttempts;
+        avatars = data.avatars;
+        yourId = data.yourId;
+        currentRoom = data.code;
+        gameStarted = true;
+
+        // Update displays
+        document.getElementById("roomCode").textContent = data.code;
+
+        // Hide lobby and modal, show game
+        lobbyEl.style.display = "none";
+        avatarModal.style.display = "none";
+        gameEl.style.display = "flex";
+
+        // Clear any messages
+        showMessage("");
+
+        // Show hint if available
+        if (data.locationHint) {
+          const hintEl = document.getElementById("locationHint");
+          hintEl.textContent = data.locationHint;
+          hintEl.classList.add("visible");
+        }
+
+        // Initialize game
+        buildGrid();
+        buildKeyboard();
         renderAvatars();
       });
 
-      socket.on("playerLeft", (data) => {
+      // Error handling
+      socket.on("errorMsg", function (msg) {
+        console.error("Error:", msg);
+        showMessage(msg);
+
+        if (msg.includes("Room")) {
+          lobbyEl.style.display = "block";
+          gameEl.style.display = "none";
+          avatarModal.style.display = "none";
+          gameStarted = false;
+          currentRoom = null;
+        }
+      });
+
+      // Player join/leave handlers
+      socket.on("playerJoined", function (data) {
+        console.log("Player joined:", data);
+        avatars[data.id] = {
+          seed: data.seed,
+          style: data.style,
+          options: data.options,
+        };
+        renderAvatars();
+      });
+
+      socket.on("playerLeft", function (data) {
         console.log("Player left:", data);
         delete avatars[data.id];
         renderAvatars();
       });
 
-      // Chat handlers
-      socket.on("chatMessage", (message) => {
-        const messages = document.getElementById("messages");
-        const messageDiv = document.createElement("div");
-        messageDiv.className = "chat-message";
-
-        const timeStr = message.timestamp
-          ? `<span class="timestamp">${new Date(
-              message.timestamp
-            ).toLocaleTimeString()}</span>`
-          : "";
-
-        messageDiv.innerHTML = `<strong>${message.user}:</strong> ${message.text} ${timeStr}`;
-        messages.appendChild(messageDiv);
-        messages.scrollTop = messages.scrollHeight;
-      });
-
-      const chatInput = document.getElementById("chatInput");
-      if (chatInput) {
-        chatInput.addEventListener("keypress", (e) => {
-          if (e.key === "Enter" && chatInput.value.trim()) {
-            socket.emit("chatMessage", chatInput.value.trim());
-            chatInput.value = "";
-          }
-        });
-      }
-
-      // Grid building function
+      // Game functionality
       function buildGrid() {
         console.log("Building grid with wordLength:", wordLength);
         const grid = document.getElementById("grid");
@@ -1777,25 +1428,218 @@
         }
       }
 
-      // Keyboard building function
       function buildKeyboard() {
         console.log("Building keyboard");
         const kb = document.getElementById("keyboard");
         kb.innerHTML = "";
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((l) => {
-          const btn = document.createElement("button");
-          btn.textContent = l;
-          btn.onclick = () => {
-            if (gameStarted) {
-              const input = document.getElementById("guessInput");
-              if (input.value.length < wordLength) {
-                input.value += l;
-              }
+
+        const layout = [
+          "QWERTYUIOP".split(""),
+          "ASDFGHJKL".split(""),
+          ["Enter", ..."ZXCVBNM".split(""), "Backspace"],
+        ];
+
+        layout.forEach((row) => {
+          const rowDiv = document.createElement("div");
+          rowDiv.className = "keyboard-row";
+
+          row.forEach((key) => {
+            const btn = document.createElement("button");
+            btn.className = "key";
+            if (key === "Enter" || key === "Backspace") {
+              btn.className += " wide-key";
             }
-          };
-          kb.appendChild(btn);
+            btn.textContent = key === "Backspace" ? "⌫" : key;
+            btn.onclick = () => {
+              if (!gameStarted) {
+                showMessage("Game has not started yet");
+                return;
+              }
+              const input = document.getElementById("guessInput");
+              if (key === "Backspace") {
+                input.value = input.value.slice(0, -1);
+              } else if (key === "Enter") {
+                if (input.value.length === wordLength) {
+                  socket.emit("makeGuess", input.value.trim().toUpperCase());
+                  input.value = "";
+                } else {
+                  showMessage(`Guess must be ${wordLength} letters`);
+                }
+              } else if (input.value.length < wordLength) {
+                input.value += key;
+              }
+            };
+            rowDiv.appendChild(btn);
+          });
+          kb.appendChild(rowDiv);
         });
       }
+
+      function renderAvatars() {
+        const div = document.getElementById("players");
+        div.innerHTML = "";
+
+        Object.entries(avatars).forEach(([id, data]) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "player";
+
+          const img = document.createElement("img");
+          const params = new URLSearchParams({
+            seed: data.seed,
+            backgroundColor: data.options.backgroundColor,
+            eyes: data.options.mood === "happy" ? "happy" : "round",
+            radius: "10",
+            scale: "90",
+            mouthProbability: "100",
+            primaryColorLevel: "600",
+            secondaryColorLevel: "400",
+            sidesCount: "6",
+          });
+
+          img.src = `https://api.dicebear.com/7.x/bottts/svg?${params.toString()}`;
+          img.alt = id;
+
+          const lbl = document.createElement("span");
+          lbl.textContent = id === yourId ? "YOU" : id.slice(0, 5);
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(lbl);
+          div.appendChild(wrapper);
+        });
+      }
+
+      // Handle guesses
+      socket.on("feedback", function (data) {
+        console.log("Received feedback:", data);
+        const rows = Array.from(document.getElementById("grid").children);
+        const playerAttempts = data.player === socket.id ? rows : [];
+
+        const targetRow = playerAttempts.find(
+          (row) => !row.querySelector(".cell.revealed")
+        );
+        if (targetRow) {
+          const cells = Array.from(targetRow.children);
+          cells.forEach((cell, i) => {
+            const front = cell.querySelector(".front");
+            const back = cell.querySelector(".back");
+            front.textContent = data.guess[i];
+            back.textContent = data.guess[i];
+            back.className = `back ${data.feedback[i]}`;
+            cell.classList.add("revealed");
+          });
+
+          // Update keyboard colors
+          const keys = document.querySelectorAll(".key");
+          data.guess.split("").forEach((letter, i) => {
+            const key = Array.from(keys).find((k) => k.textContent === letter);
+            if (key) {
+              const currentClass = key.className.match(/state-\w+/)?.[0];
+              const newClass = `state-${data.feedback[i]}`;
+              if (currentClass) {
+                if (
+                  currentClass === "state-correct" ||
+                  (currentClass === "state-present" &&
+                    newClass === "state-absent")
+                ) {
+                  return;
+                }
+                key.classList.remove(currentClass);
+              }
+              key.classList.add(newClass);
+            }
+          });
+        }
+      });
+
+      // Handle game over
+      socket.on("gameOver", function (data) {
+        console.log("Game over:", data);
+        gameStarted = false;
+
+        if (data.winner) {
+          const rows = Array.from(document.getElementById("grid").children);
+          const lastPlayedRow = rows.find(
+            (row) =>
+              row.querySelector(".cell.revealed") &&
+              !row.nextElementSibling?.querySelector(".cell.revealed")
+          );
+          if (lastPlayedRow) {
+            lastPlayedRow.classList.add("winning-row");
+          }
+
+          if (data.winner === socket.id) {
+            createConfetti();
+            showMessage("🎉 Congratulations! You won! 🎉");
+          } else {
+            showMessage(
+              `${data.winner.slice(0, 5)} wins! The answer was: ${data.answer}`
+            );
+          }
+        } else {
+          showMessage(`Game Over! The answer was: ${data.answer}`);
+        }
+
+        // Show final hint
+        const hintEl = document.getElementById("locationHint");
+        hintEl.textContent = data.locationHint;
+        hintEl.classList.add("visible");
+      });
+
+      // Handle hints
+      document.getElementById("hintBtn").addEventListener("click", function () {
+        if (!gameStarted) {
+          showMessage("Game has not started yet");
+          return;
+        }
+        socket.emit("requestHint");
+      });
+
+      socket.on("hint", function (data) {
+        console.log("Received hint:", data);
+        const rows = Array.from(document.getElementById("grid").children);
+        rows.forEach((row) => {
+          const cell = row.children[data.index];
+          const front = cell.querySelector(".front");
+          if (!front.textContent) {
+            front.textContent = data.letter;
+            const back = cell.querySelector(".back");
+            back.textContent = data.letter;
+            back.classList.add("present");
+            cell.classList.add("revealed");
+          }
+        });
+
+        // Update location hint with animation
+        const hintEl = document.getElementById("locationHint");
+        hintEl.classList.remove("visible");
+        setTimeout(() => {
+          hintEl.textContent = data.locationHint;
+          hintEl.classList.add("visible");
+        }, 300);
+      });
+
+      // Celebration effects
+      function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          confetti.style.left = Math.random() * window.innerWidth + "px";
+          confetti.style.top = "-10px";
+          confetti.style.backgroundColor = ["#00f2fe", "#4facfe", "#64ffda"][
+            Math.floor(Math.random() * 3)
+          ];
+          confetti.style.animation = `celebrationConfetti ${
+            1 + Math.random() * 2
+          }s linear forwards`;
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 3000);
+        }
+      }
+
+      // Initialize avatar selection on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector(".avatar-option").click();
+      });
     </script>
   </body>
 </html>
