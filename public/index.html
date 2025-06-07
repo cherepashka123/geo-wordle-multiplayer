@@ -1157,11 +1157,16 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      // Initialize socket connection
+      // Initialize socket connection with proper configuration
       const socket = io({
         reconnectionAttempts: 5,
         timeout: 10000,
         transports: ["websocket", "polling"],
+        path: "/socket.io/",
+        forceNew: true,
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
       });
 
       // Game state
