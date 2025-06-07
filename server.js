@@ -8,7 +8,18 @@ const capitals = require("./capitals.json");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.VERCEL_URL
+      ? [`https://${process.env.VERCEL_URL}`, /\.vercel\.app$/]
+      : ["http://localhost:3000"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+  path: "/socket.io",
+  addTrailingSlash: false,
+  transports: ["websocket", "polling"],
+});
 
 // serve static
 app.use(express.static(path.join(__dirname, "public")));
@@ -20,11 +31,22 @@ const countries = getNames().map((n) =>
 const capitalCities = capitals.capitals;
 
 // in-memory rooms: { code: { mode, answer, players:Set, attempts:{}, hintedIndices:Set, avatars:{} } }
-const rooms = {};
+const rooms = new Map();
 
 // in-memory lobby chat
 const lobbyMessages = [];
 const MAX_LOBBY_MESSAGES = 50;
+
+// Game state
+const WORD_LENGTH = 5;
+const MAX_ATTEMPTS = 6;
+
+// Countries and cities data (simplified for example)
+const locations = {
+  countries: ["SPAIN", "ITALY", "FRANCE", "JAPAN", "CHINA", "INDIA", "BRAZIL"],
+  cities: ["PARIS", "TOKYO", "ROME", "DELHI", "CAIRO", "MIAMI", "DUBAI"],
+  both: ["SPAIN", "PARIS", "TOKYO", "INDIA", "ROME", "DUBAI", "MIAMI"],
+};
 
 // helper: unique room codes
 function generateCode(len = 6) {
@@ -35,7 +57,7 @@ function generateCode(len = 6) {
       { length: len },
       () => chars[Math.floor(Math.random() * chars.length)]
     ).join("");
-  } while (rooms[code]);
+  } while (rooms.has(code));
   return code;
 }
 
@@ -110,17 +132,17 @@ io.on("connection", (socket) => {
 
       console.log(`Creating room ${code} with answer: ${answer}`);
 
-      rooms[code] = {
+      rooms.set(code, {
         mode,
         answer,
-        players: new Set(),
-        attempts: {},
+        players: new Map([[socket.id, { avatarStyle, avatarOptions }]]),
+        attempts: new Map(),
         hintedIndices: new Set(),
         avatars: {},
         messages: [],
-      };
+      });
 
-      socket.emit("roomCreated", code);
+      socket.emit("roomCreated", { code });
     } catch (error) {
       console.error("Error creating room:", error);
       socket.emit("errorMsg", "Failed to create room. Please try again.");
@@ -140,15 +162,15 @@ io.on("connection", (socket) => {
         return;
       }
 
-      const room = rooms[code];
+      const room = rooms.get(code);
       if (!room) {
         socket.emit("errorMsg", "Room not found");
         return;
       }
 
       currentRoom = code;
-      room.players.add(socket.id);
-      room.attempts[socket.id] = 0;
+      room.players.set(socket.id, { avatarStyle, avatarOptions });
+      room.attempts.set(socket.id, []);
 
       // Store avatar info
       room.avatars[socket.id] = {
@@ -165,8 +187,8 @@ io.on("connection", (socket) => {
       socket.emit("joined", {
         code,
         wordLength: room.answer.length,
-        maxAttempts: 6,
-        avatars: room.avatars,
+        maxAttempts: MAX_ATTEMPTS,
+        avatars: Object.fromEntries(room.players),
         yourId: socket.id,
         locationHint: getLocationHint(room.answer),
         messages: room.messages,
@@ -187,7 +209,7 @@ io.on("connection", (socket) => {
 
   // 3) chat
   socket.on("chatMessage", (text) => {
-    if (!currentRoom || !rooms[currentRoom]) {
+    if (!currentRoom || !rooms.has(currentRoom)) {
       socket.emit("errorMsg", "You are not in a room");
       return;
     }
@@ -196,17 +218,17 @@ io.on("connection", (socket) => {
       text,
       timestamp: Date.now(),
     };
-    rooms[currentRoom].messages.push(message);
+    rooms.get(currentRoom).messages.push(message);
     io.to(currentRoom).emit("chatMessage", message);
   });
 
   // 4) hint
   socket.on("requestHint", () => {
-    if (!currentRoom || !rooms[currentRoom]) {
+    if (!currentRoom || !rooms.has(currentRoom)) {
       socket.emit("errorMsg", "You are not in a room");
       return;
     }
-    const room = rooms[currentRoom];
+    const room = rooms.get(currentRoom);
     const { answer, hintedIndices } = room;
     const available = [...Array(answer.length).keys()].filter(
       (i) => !hintedIndices.has(i)
@@ -227,12 +249,12 @@ io.on("connection", (socket) => {
 
   // 5) guess
   socket.on("makeGuess", (guess) => {
-    if (!currentRoom || !rooms[currentRoom]) {
+    if (!currentRoom || !rooms.has(currentRoom)) {
       socket.emit("errorMsg", "You are not in a room");
       return;
     }
 
-    const room = rooms[currentRoom];
+    const room = rooms.get(currentRoom);
     const { answer, mode } = room;
 
     if (!guess || typeof guess !== "string") {
@@ -268,7 +290,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    room.attempts[socket.id]++;
+    room.attempts.get(socket.id).push(guess);
 
     const feedback = guess.split("").map((ch, i) => {
       if (ch === answer[i]) return "correct";
@@ -282,34 +304,54 @@ io.on("connection", (socket) => {
       player: socket.id,
     });
 
-    if (guess === answer || room.attempts[socket.id] >= 6) {
+    if (
+      guess === answer ||
+      room.attempts.get(socket.id).length >= MAX_ATTEMPTS
+    ) {
       io.to(currentRoom).emit("gameOver", {
         winner: guess === answer ? socket.id : null,
         answer,
         locationHint: getLocationHint(answer),
       });
+      rooms.delete(currentRoom);
     }
   });
 
   // 6) disconnect cleanup
   socket.on("disconnect", () => {
-    if (!currentRoom || !rooms[currentRoom]) return;
+    if (!currentRoom || !rooms.has(currentRoom)) return;
 
     console.log(`Player ${socket.id} disconnected from room ${currentRoom}`);
 
-    const room = rooms[currentRoom];
+    const room = rooms.get(currentRoom);
     io.to(currentRoom).emit("playerLeft", { id: socket.id });
     room.players.delete(socket.id);
-    delete room.attempts[socket.id];
+    room.attempts.delete(socket.id);
     delete room.avatars[socket.id];
 
     // Clean up empty rooms
     if (!room.players.size) {
       console.log(`Deleting empty room ${currentRoom}`);
-      delete rooms[currentRoom];
+      rooms.delete(currentRoom);
     }
   });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Handle root route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Add after the root route and before the server start
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Start server if not in Vercel environment
+if (!process.env.VERCEL_URL) {
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+// Export for Vercel
+module.exports = server;
