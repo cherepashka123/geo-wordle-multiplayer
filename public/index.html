@@ -53,6 +53,7 @@
         border: 1px solid rgba(0, 242, 254, 0.2);
         position: relative;
         overflow: hidden;
+        margin: 40px auto;
       }
 
       .container::after {
@@ -84,7 +85,7 @@
         font-family: "Orbitron", sans-serif;
         color: var(--neon-blue);
         font-size: 2.5rem;
-        margin-bottom: 20px;
+        margin: 0 0 30px 0;
         text-transform: uppercase;
         letter-spacing: 2px;
         text-shadow: 0 0 10px var(--neon-blue);
@@ -172,7 +173,7 @@
         padding: 30px;
         border-radius: 8px;
         width: 90%;
-        max-width: 600px;
+        max-width: 800px;
         text-align: center;
         border: 1px solid var(--neon-blue);
         box-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
@@ -188,50 +189,66 @@
 
       .avatar-options {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 20px;
-        margin: 20px 0;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        padding: 20px;
+        justify-items: center;
       }
 
       .avatar-option {
+        position: relative;
+        padding: 25px;
+        text-align: center;
+        background: rgba(6, 16, 36, 0.8);
+        border-radius: 15px;
+        border: 2px solid rgba(0, 242, 254, 0.2);
+        transition: all 0.3s ease;
+        width: 200px;
         cursor: pointer;
-        padding: 15px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        background: rgba(10, 25, 47, 0.5);
-        border: 1px solid rgba(0, 242, 254, 0.2);
-      }
-
-      .avatar-option:hover {
-        transform: translateY(-5px);
-        border-color: var(--neon-blue);
-        box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
-      }
-
-      .avatar-option img {
-        width: 80px;
-        height: 80px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
+        margin: 10px;
       }
 
       .avatar-option.selected {
+        border: 2px solid var(--neon-blue);
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        transform: translateY(-5px);
         background: rgba(0, 242, 254, 0.1);
-        border-color: var(--neon-blue);
       }
 
-      .avatar-option.selected img {
+      .avatar-option:hover {
         border-color: var(--neon-blue);
-        box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        transform: translateY(-5px);
+      }
+
+      .avatar-option img {
+        width: 120px;
+        height: 120px;
+        border-radius: 15px;
+        margin: 15px 0;
+        transition: all 0.3s ease;
+      }
+
+      .avatar-name {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 242, 254, 0.1);
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-family: "Orbitron", sans-serif;
+        color: var(--neon-blue);
+        font-size: 0.9rem;
+        white-space: nowrap;
+        border: 1px solid rgba(0, 242, 254, 0.3);
+        backdrop-filter: blur(5px);
       }
 
       /* player avatars */
       #players {
         display: flex;
         gap: 20px;
-        margin-bottom: 20px;
+        margin: 20px 0 30px 0;
         flex-wrap: wrap;
       }
 
@@ -289,19 +306,23 @@
         display: grid;
         gap: 8px;
         justify-content: center;
-        margin: 20px 0;
+        margin: 30px 0;
+        padding: 20px;
+        background: rgba(10, 25, 47, 0.5);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
       }
 
       .row {
         display: grid;
-        grid-template-columns: repeat(var(--cols), 60px);
-        gap: 6px;
+        grid-template-columns: repeat(var(--cols), 65px);
+        gap: 8px;
       }
 
       .cell {
         perspective: 1000px;
-        width: 60px;
-        height: 60px;
+        width: 65px;
+        height: 65px;
       }
 
       .inner {
@@ -462,13 +483,20 @@
 
       /* Room code display */
       #roomCode {
-        font-family: "Orbitron", sans-serif;
+        display: inline-block;
+        padding: 8px 15px;
         background: rgba(0, 242, 254, 0.1);
-        padding: 5px 15px;
-        border-radius: 4px;
-        border: 1px solid var(--neon-blue);
+        border: 2px solid var(--neon-blue);
+        border-radius: 6px;
         color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+        margin: 10px auto;
         text-shadow: 0 0 5px var(--neon-blue);
+        max-width: calc(100% - 30px);
+        box-sizing: border-box;
+        text-align: center;
       }
 
       /* Hint button */
@@ -494,12 +522,11 @@
       }
 
       .hint-container {
-        background: rgba(10, 25, 47, 0.5);
-        padding: 20px;
-        border-radius: 8px;
-        margin: 20px 0;
-        border: 1px solid rgba(0, 242, 254, 0.2);
-        text-align: center;
+        margin: 30px 0;
+        padding: 25px;
+        background: rgba(10, 25, 47, 0.7);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 242, 254, 0.3);
       }
 
       .location-hint {
@@ -519,7 +546,11 @@
       }
 
       .avatar-customization {
-        margin-top: 20px;
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(6, 16, 36, 0.8);
+        border-radius: 15px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
       }
 
       .avatar-customization h3 {
@@ -530,29 +561,32 @@
 
       .customization-options {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 10px;
-        margin-bottom: 15px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 15px;
       }
 
       .option-group {
-        text-align: center;
+        text-align: left;
       }
 
       .option-group label {
         display: block;
-        margin-bottom: 5px;
-        color: #e0e0e0;
+        margin-bottom: 8px;
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.9rem;
       }
 
       .option-group select {
         width: 100%;
-        padding: 8px;
+        padding: 10px;
         background: rgba(10, 25, 47, 0.5);
         border: 1px solid rgba(0, 242, 254, 0.2);
         color: #e0e0e0;
         border-radius: 4px;
         font-family: "Roboto", sans-serif;
+        cursor: pointer;
       }
 
       .option-group select:focus {
@@ -624,72 +658,408 @@
         border-color: var(--neon-blue);
         box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
       }
+
+      /* Enhanced guess input section */
+      #guessContainer {
+        margin: 30px 0;
+        padding: 20px;
+        background: rgba(10, 25, 47, 0.7);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.1);
+      }
+
+      #guessInput {
+        flex: 1;
+        padding: 15px 20px;
+        font-size: 1.2rem;
+        background: rgba(6, 16, 36, 0.8);
+        border: 2px solid rgba(0, 242, 254, 0.3);
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-family: "Orbitron", sans-serif;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+      }
+
+      #guessInput:focus {
+        outline: none;
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        transform: translateY(-2px);
+      }
+
+      #guessInput::placeholder {
+        color: rgba(224, 224, 224, 0.5);
+      }
+
+      #submitBtn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        background: rgba(0, 242, 254, 0.1);
+        border: 2px solid var(--neon-blue);
+        color: var(--neon-blue);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Orbitron", sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
+      }
+
+      #submitBtn:hover {
+        background: rgba(0, 242, 254, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+      }
+
+      /* Make the game container scrollable if needed */
+      #game {
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        padding-right: 15px;
+      }
+
+      /* Hide scrollbar but keep functionality */
+      #game::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #game::-webkit-scrollbar-track {
+        background: rgba(6, 16, 36, 0.8);
+        border-radius: 4px;
+      }
+
+      #game::-webkit-scrollbar-thumb {
+        background: rgba(0, 242, 254, 0.3);
+        border-radius: 4px;
+      }
+
+      #game::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 242, 254, 0.5);
+      }
+
+      /* Winning animation effects */
+      @keyframes winningCell {
+        0% {
+          transform: scale(1) rotateX(180deg);
+        }
+        50% {
+          transform: scale(1.1) rotateX(180deg);
+          box-shadow: 0 0 20px var(--neon-blue);
+        }
+        100% {
+          transform: scale(1) rotateX(180deg);
+        }
+      }
+
+      @keyframes celebrationConfetti {
+        0% {
+          transform: translateY(0) rotate(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
+      .winning-row .cell .inner {
+        animation: winningCell 0.5s ease-in-out;
+      }
+
+      .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: var(--neon-blue);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      /* Enhanced Lobby Styles */
+      #lobby {
+        background: rgba(10, 25, 47, 0.7);
+        padding: 30px;
+        border-radius: 15px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 242, 254, 0.1);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .mode-selection {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: rgba(6, 16, 36, 0.8);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+      }
+
+      .mode-selection label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background: rgba(0, 242, 254, 0.1);
+        border: 2px solid rgba(0, 242, 254, 0.2);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .mode-selection label:hover {
+        background: rgba(0, 242, 254, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .mode-selection input[type="radio"]:checked + span {
+        color: var(--neon-blue);
+        text-shadow: 0 0 5px var(--neon-blue);
+      }
+
+      .mode-selection input[type="radio"] {
+        display: none;
+      }
+
+      .mode-selection span {
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.1rem;
+        color: #e0e0e0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .lobby-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .action-card {
+        background: rgba(6, 16, 36, 0.8);
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        text-align: center;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .action-card input,
+      .action-card button {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      .action-card:hover {
+        border-color: var(--neon-blue);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2);
+      }
+
+      .action-card h3 {
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .action-card p {
+        color: #e0e0e0;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      #createBtn,
+      #joinBtn {
+        width: 100%;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        margin-top: 10px;
+      }
+
+      #roomInput {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2rem;
+        background: rgba(10, 25, 47, 0.5);
+        border: 2px solid rgba(0, 242, 254, 0.3);
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-family: "Orbitron", sans-serif;
+        letter-spacing: 2px;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      #roomInput:focus {
+        outline: none;
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+      }
+
+      #lobbyMsg {
+        text-align: center;
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        margin-top: 20px;
+        padding: 10px;
+        min-height: 40px;
+      }
+
+      /* Game Stats Panel (replacing chat) */
+      .stats-panel {
+        background: rgba(10, 25, 47, 0.7);
+        border-radius: 15px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        padding: 25px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .stats-panel h2 {
+        color: var(--neon-blue);
+        font-family: "Orbitron", sans-serif;
+        text-align: center;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      .stat-card {
+        background: rgba(6, 16, 36, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 242, 254, 0.2);
+        text-align: center;
+      }
+
+      .stat-card h3 {
+        color: #e0e0e0;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .stat-value {
+        color: var(--neon-blue);
+        font-size: 1.8rem;
+        font-family: "Orbitron", sans-serif;
+        text-shadow: 0 0 5px var(--neon-blue);
+      }
+
+      .game-rules {
+        background: rgba(6, 16, 36, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: auto;
+      }
+
+      .game-rules h3 {
+        color: var(--neon-blue);
+        margin-bottom: 15px;
+        font-family: "Orbitron", sans-serif;
+      }
+
+      .game-rules ul {
+        color: #e0e0e0;
+        list-style: none;
+        padding: 0;
+      }
+
+      .game-rules li {
+        margin-bottom: 10px;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      .game-rules li:before {
+        content: "→";
+        color: var(--neon-blue);
+        position: absolute;
+        left: 0;
+      }
+
+      #game {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
     </style>
   </head>
   <body>
     <!-- Avatar Selection Modal -->
     <div id="avatarModal">
       <div class="modal-content">
-        <h2>Choose Your Avatar Style</h2>
+        <h2>Choose Your Character</h2>
         <div class="avatar-options">
           <div class="avatar-option" data-style="adventurer">
+            <div class="avatar-name">Masha</div>
             <img
-              src="https://api.dicebear.com/7.x/adventurer/svg?seed=sample"
-              alt="Adventurer"
+              src="https://api.dicebear.com/7.x/bottts/svg?seed=MashaBunny&backgroundColor=ffdfbf&eyes=happy&radius=10&primaryColorLevel=600&secondaryColorLevel=400&mouthProbability=100&sidesCount=8&scale=90"
+              alt="Masha"
             />
-            <span>Adventurer</span>
           </div>
           <div class="avatar-option" data-style="pixel-art">
+            <div class="avatar-name">Sasha</div>
             <img
-              src="https://api.dicebear.com/7.x/pixel-art/svg?seed=sample"
-              alt="Pixel Art"
+              src="https://api.dicebear.com/7.x/bottts/svg?seed=SashaDino&backgroundColor=b6e3f4&eyes=bulging&radius=10&primaryColorLevel=600&secondaryColorLevel=400&mouthProbability=100&sidesCount=5&scale=90"
+              alt="Sasha"
             />
-            <span>Pixel Art</span>
-          </div>
-          <div class="avatar-option" data-style="bottts">
-            <img
-              src="https://api.dicebear.com/7.x/bottts/svg?seed=sample"
-              alt="Robot"
-            />
-            <span>Robot</span>
           </div>
           <div class="avatar-option" data-style="lorelei">
+            <div class="avatar-name">Natasha</div>
             <img
-              src="https://api.dicebear.com/7.x/lorelei/svg?seed=sample"
-              alt="Lorelei"
+              src="https://api.dicebear.com/7.x/bottts/svg?seed=NatashaSwan&backgroundColor=ffd9e0&eyes=happy&radius=10&primaryColorLevel=600&secondaryColorLevel=400&mouthProbability=100&sidesCount=4&scale=90"
+              alt="Natasha"
             />
-            <span>Lorelei</span>
+          </div>
+          <div class="avatar-option" data-style="bottts">
+            <div class="avatar-name">SergikTurtle</div>
+            <img
+              src="https://api.dicebear.com/7.x/bottts/svg?seed=SergikTurtle&backgroundColor=c1ffc1&eyes=round&radius=10&primaryColorLevel=600&secondaryColorLevel=400&mouthProbability=100&sidesCount=6&scale=90"
+              alt="SergikTurtle"
+            />
           </div>
         </div>
         <div class="avatar-customization">
-          <h3>Customize Your Avatar</h3>
+          <h3>Customize Colors</h3>
           <div class="customization-options">
             <div class="option-group">
               <label>Background</label>
               <select id="bgColor">
                 <option value="b6e3f4">Ocean Blue</option>
                 <option value="ffd5dc">Soft Pink</option>
-                <option value="d1d4f9">Sky Blue</option>
-                <option value="c0aede">Purple</option>
-                <option value="b6e3f4">Cyan</option>
-              </select>
-            </div>
-            <div class="option-group" id="adventurerOptions">
-              <label>Hair Style</label>
-              <select id="hairStyle">
-                <option value="short">Short</option>
-                <option value="long">Long</option>
-                <option value="bun">Bun</option>
-                <option value="pixie">Pixie</option>
+                <option value="c1ffc1">Mint Green</option>
+                <option value="ffe4b5">Mellow Yellow</option>
+                <option value="e6e6fa">Lavender</option>
               </select>
             </div>
             <div class="option-group">
               <label>Mood</label>
               <select id="mood">
                 <option value="happy">Happy</option>
-                <option value="surprised">Surprised</option>
-                <option value="concerned">Concerned</option>
-                <option value="starstruck">Star-struck</option>
+                <option value="excited">Excited</option>
+                <option value="chill">Chill</option>
+                <option value="playful">Playful</option>
               </select>
             </div>
           </div>
@@ -703,23 +1073,40 @@
         <h1>Geo Wordle Multiplayer</h1>
         <div id="lobby">
           <div class="mode-selection">
-            <label
-              ><input type="radio" name="mode" value="countries" checked />
-              Countries</label
-            >
-            <label
-              ><input type="radio" name="mode" value="cities" /> Cities</label
-            >
-            <label><input type="radio" name="mode" value="both" /> Both</label>
+            <label>
+              <input type="radio" name="mode" value="countries" checked />
+              <span>Countries</span>
+            </label>
+            <label>
+              <input type="radio" name="mode" value="cities" />
+              <span>Cities</span>
+            </label>
+            <label>
+              <input type="radio" name="mode" value="both" />
+              <span>Both</span>
+            </label>
           </div>
-          <button id="createBtn">Create Room</button>
-          <input
-            id="roomInput"
-            type="text"
-            placeholder="Room Code"
-            maxlength="6"
-          />
-          <button id="joinBtn">Join Room</button>
+
+          <div class="lobby-actions">
+            <div class="action-card">
+              <h3>Create Room</h3>
+              <p>Start a new game and invite friends to join</p>
+              <button id="createBtn">Create Room</button>
+            </div>
+
+            <div class="action-card">
+              <h3>Join Room</h3>
+              <p>Enter a room code to join an existing game</p>
+              <input
+                id="roomInput"
+                type="text"
+                placeholder="Enter Room Code"
+                maxlength="6"
+              />
+              <button id="joinBtn">Join Room</button>
+            </div>
+          </div>
+
           <div id="lobbyMsg"></div>
         </div>
 
@@ -745,10 +1132,31 @@
         </div>
       </div>
 
-      <div id="chat">
-        <h2>Chat</h2>
-        <div id="messages"></div>
-        <input id="chatInput" type="text" placeholder="Type & enter…" />
+      <!-- Replace chat with stats panel -->
+      <div class="stats-panel">
+        <h2>Game Stats</h2>
+        <div class="stat-card">
+          <h3>Games Played</h3>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Best Streak</h3>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Average Attempts</h3>
+          <div class="stat-value">-</div>
+        </div>
+
+        <div class="game-rules">
+          <h3>How to Play</h3>
+          <ul>
+            <li>Guess the country or capital in 6 tries</li>
+            <li>Each guess must be a valid location</li>
+            <li>Colors show how close your guess was</li>
+            <li>Use hints to get location clues</li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -782,6 +1190,10 @@
       let selectedAvatarStyle = "adventurer";
       let gameStarted = false;
 
+      // Avatar and customization state
+      let currentBgColor = "b6e3f4";
+      let currentMood = "happy";
+
       // DOM Elements
       const avatarModal = document.getElementById("avatarModal");
       const avatarOptions = document.querySelectorAll(".avatar-option");
@@ -798,312 +1210,270 @@
         console.log("Message:", msg);
       }
 
-      // Select first avatar option by default
-      avatarOptions[0].classList.add("selected");
+      // Simplified avatar selection and game flow
+      document.addEventListener("DOMContentLoaded", function () {
+        const createBtn = document.getElementById("createBtn");
+        const joinBtn = document.getElementById("joinBtn");
+        const confirmBtn = document.getElementById("confirmAvatar");
+        const avatarModal = document.getElementById("avatarModal");
+        const lobbyDiv = document.getElementById("lobby");
+        const gameDiv = document.getElementById("game");
+        let selectedAvatarStyle = "adventurer";
 
-      // Update avatar customization based on style
-      function updateCustomizationOptions(style) {
-        const adventurerOpts = document.getElementById("adventurerOptions");
-        const hairStyleSelect = document.getElementById("hairStyle");
-        const moodSelect = document.getElementById("mood");
-
-        if (style === "adventurer") {
-          adventurerOpts.style.display = "block";
-          hairStyleSelect.disabled = false;
-        } else if (style === "bottts") {
-          adventurerOpts.style.display = "none";
-          hairStyleSelect.disabled = true;
-        } else if (style === "pixel-art") {
-          adventurerOpts.style.display = "block";
-          hairStyleSelect.disabled = false;
-        } else if (style === "lorelei") {
-          adventurerOpts.style.display = "block";
-          hairStyleSelect.disabled = false;
-        }
-      }
-
-      // Update avatar preview
-      function updateAvatarPreview() {
-        const style = selectedAvatarStyle;
-        const bg = document.getElementById("bgColor").value;
-        const hair = document.getElementById("hairStyle").value;
-        const mood = document.getElementById("mood").value;
-
-        let url = `https://api.dicebear.com/7.x/${style}/svg?seed=preview&backgroundColor=${bg}`;
-
-        // Add style-specific options
-        if (style === "adventurer") {
-          url += `&hair=${hair}&mouth=${mood}`;
-        } else if (style === "bottts") {
-          url += `&mood=${mood}`;
-        } else if (style === "pixel-art") {
-          url += `&hair=${hair}&mouth=${mood}`;
-        } else if (style === "lorelei") {
-          url += `&hair=${hair}&mouth=${mood}`;
-        }
-
-        document.querySelector(".avatar-option.selected img").src = url;
-      }
-
-      // Avatar style selection
-      avatarOptions.forEach((option) => {
-        option.addEventListener("click", () => {
-          avatarOptions.forEach((opt) => opt.classList.remove("selected"));
-          option.classList.add("selected");
-          selectedAvatarStyle = option.dataset.style;
-          updateCustomizationOptions(selectedAvatarStyle);
-          updateAvatarPreview();
-          console.log("Selected avatar style:", selectedAvatarStyle);
-        });
-      });
-
-      // Create room
-      createBtn.addEventListener("click", () => {
-        if (!socket.connected) {
-          showMessage("Not connected to server. Please wait...");
-          return;
-        }
-        const mode = document.querySelector('input[name="mode"]:checked').value;
-        console.log("Creating room with mode:", mode);
-        showMessage(""); // Clear any previous messages
-        avatarModal.style.display = "flex";
-      });
-
-      // Join room
-      joinBtn.addEventListener("click", () => {
-        if (!socket.connected) {
-          showMessage("Not connected to server. Please wait...");
-          return;
-        }
-        const code = document.getElementById("roomInput").value.trim();
-        if (!code) {
-          showMessage("Please enter a room code");
-          return;
-        }
-        console.log("Joining room:", code);
-        showMessage(""); // Clear any previous messages
-        avatarModal.style.display = "flex";
-      });
-
-      // Confirm avatar and create/join room
-      confirmAvatarBtn.addEventListener("click", () => {
-        if (!socket.connected) {
-          showMessage("Not connected to server. Please wait...");
-          return;
-        }
-
-        const code = document
-          .getElementById("roomInput")
-          .value.trim()
-          .toUpperCase();
-        const avatarOptions = {
-          backgroundColor: document.getElementById("bgColor").value,
-          hair: document.getElementById("hairStyle").disabled
-            ? undefined
-            : document.getElementById("hairStyle").value,
-          mood: document.getElementById("mood").value,
+        // Create room button
+        createBtn.onclick = function () {
+          if (!socket.connected) {
+            showMessage("Not connected to server. Please wait...");
+            return;
+          }
+          avatarModal.style.display = "flex";
         };
 
-        avatarModal.style.display = "none";
+        // Join room button
+        joinBtn.onclick = function () {
+          if (!socket.connected) {
+            showMessage("Not connected to server. Please wait...");
+            return;
+          }
+          const code = document.getElementById("roomInput").value.trim();
+          if (!code) {
+            showMessage("Please enter a room code");
+            return;
+          }
+          avatarModal.style.display = "flex";
+        };
 
-        if (code) {
-          console.log("Joining room with code:", code);
+        // Avatar selection
+        const avatarOptions = document.querySelectorAll(".avatar-option");
+        avatarOptions.forEach((option) => {
+          option.onclick = function () {
+            avatarOptions.forEach((opt) => {
+              opt.style.border = "2px solid rgba(0, 242, 254, 0.2)";
+              opt.style.boxShadow = "none";
+              opt.classList.remove("selected");
+            });
+            this.style.border = "2px solid var(--neon-blue)";
+            this.style.boxShadow = "0 0 20px rgba(0, 242, 254, 0.3)";
+            this.classList.add("selected");
+            selectedAvatarStyle = this.dataset.style;
+          };
+        });
+
+        // Select first avatar by default
+        avatarOptions[0].click();
+
+        // Customization handlers
+        const bgColorSelect = document.getElementById("bgColor");
+        const moodSelect = document.getElementById("mood");
+
+        function updateSelectedAvatar() {
+          const selectedAvatar = document.querySelector(
+            ".avatar-option.selected"
+          );
+          if (!selectedAvatar) return;
+
+          const img = selectedAvatar.querySelector("img");
+          const params = new URLSearchParams({
+            seed: getAvatarSeed(selectedAvatarStyle),
+            backgroundColor: bgColorSelect.value,
+            eyes: moodSelect.value === "happy" ? "happy" : "round",
+            radius: "10",
+            scale: "90",
+            mouthProbability: "100",
+            primaryColorLevel: "600",
+            secondaryColorLevel: "400",
+            sidesCount: getAvatarSides(selectedAvatarStyle),
+          });
+
+          img.src = `https://api.dicebear.com/7.x/bottts/svg?${params.toString()}`;
+        }
+
+        bgColorSelect.onchange = updateSelectedAvatar;
+        moodSelect.onchange = updateSelectedAvatar;
+
+        // Socket event handlers
+        socket.on("roomCreated", function (data) {
+          console.log("Room created:", data);
+          const code = data.code || data;
+          document.getElementById("roomCode").textContent = code;
+          document.getElementById("roomInput").value = code;
+
+          const avatarOptions = {
+            backgroundColor: bgColorSelect.value,
+            mood: moodSelect.value,
+          };
+
           socket.emit("joinRoom", {
             code,
             avatarStyle: selectedAvatarStyle,
             avatarOptions,
           });
-        } else {
-          const mode = document.querySelector(
-            'input[name="mode"]:checked'
-          ).value;
-          console.log("Creating room with mode:", mode);
-          socket.emit("createRoom", {
-            mode,
-            avatarStyle: selectedAvatarStyle,
-            avatarOptions,
-          });
-        }
-      });
+        });
 
-      // Handle room creation response
-      socket.on("roomCreated", (data) => {
-        console.log("Room created:", data);
-        const code = data.code || data; // Handle both new and old response format
-        document.getElementById("lobbyMsg").textContent = `Room code: ${code}`;
-        document.getElementById("roomInput").value = code;
+        socket.on("joined", function (data) {
+          console.log("Joined room:", data);
+          wordLength = data.wordLength;
+          maxAttempts = data.maxAttempts;
+          avatars = data.avatars;
+          yourId = data.yourId;
 
-        // Automatically join the created room
-        const avatarOptions = {
-          backgroundColor: document.getElementById("bgColor").value,
-          hair: document.getElementById("hairStyle").disabled
-            ? undefined
-            : document.getElementById("hairStyle").value,
-          mood: document.getElementById("mood").value,
+          // Update displays
+          document.getElementById("roomCode").textContent = data.code;
+
+          // Hide lobby and modal, show game
+          lobbyDiv.style.display = "none";
+          avatarModal.style.display = "none";
+          gameDiv.style.display = "block";
+
+          // Clear any messages
+          showMessage("");
+
+          // Show hint if available
+          if (data.locationHint) {
+            const hintEl = document.getElementById("locationHint");
+            hintEl.textContent = data.locationHint;
+            hintEl.classList.add("visible");
+          }
+
+          // Initialize game
+          buildGrid();
+          buildKeyboard();
+          renderAvatars();
+          gameStarted = true;
+        });
+
+        // Confirm avatar selection
+        confirmBtn.onclick = function () {
+          const code = document
+            .getElementById("roomInput")
+            .value.trim()
+            .toUpperCase();
+          const avatarOptions = {
+            backgroundColor: bgColorSelect.value,
+            mood: moodSelect.value,
+          };
+
+          if (code) {
+            console.log(
+              "Joining room:",
+              code,
+              selectedAvatarStyle,
+              avatarOptions
+            );
+            socket.emit("joinRoom", {
+              code,
+              avatarStyle: selectedAvatarStyle,
+              avatarOptions,
+            });
+          } else {
+            const mode = document.querySelector(
+              'input[name="mode"]:checked'
+            ).value;
+            console.log(
+              "Creating room:",
+              mode,
+              selectedAvatarStyle,
+              avatarOptions
+            );
+            socket.emit("createRoom", {
+              mode,
+              avatarStyle: selectedAvatarStyle,
+              avatarOptions,
+            });
+          }
         };
 
-        socket.emit("joinRoom", {
-          code: code,
-          avatarStyle: selectedAvatarStyle,
-          avatarOptions: avatarOptions,
-        });
-      });
+        // Error handling
+        socket.on("errorMsg", function (msg) {
+          console.error("Error:", msg);
+          showMessage(msg);
 
-      // Handle chat messages
-      socket.on("chatMessage", (message) => {
-        const messages = document.getElementById("messages");
-        const messageDiv = document.createElement("div");
-        messageDiv.className = "chat-message";
-
-        // Format timestamp if it exists
-        const timeStr = message.timestamp
-          ? `<span class="timestamp">${new Date(
-              message.timestamp
-            ).toLocaleTimeString()}</span>`
-          : "";
-
-        messageDiv.innerHTML = `<strong>${message.user}:</strong> ${message.text} ${timeStr}`;
-        messages.appendChild(messageDiv);
-        messages.scrollTop = messages.scrollHeight;
-      });
-
-      // Handle chat input
-      const chatInput = document.getElementById("chatInput");
-      chatInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter" && chatInput.value.trim()) {
-          socket.emit("chatMessage", chatInput.value.trim());
-          chatInput.value = "";
-        }
-      });
-
-      // Socket event handlers
-      socket.on("connect", () => {
-        console.log("Connected to server");
-        showMessage("");
-      });
-
-      socket.on("connect_error", (error) => {
-        console.error("Connection error:", error);
-        showMessage("Connection error. Please try again.");
-      });
-
-      socket.on("disconnect", () => {
-        console.log("Disconnected from server");
-        showMessage("Disconnected from server. Trying to reconnect...");
-      });
-
-      socket.on("errorMsg", (msg) => {
-        console.error("Error:", msg);
-        showMessage(msg);
-        if (msg.includes("Room")) {
-          lobbyEl.style.display = "block";
-          gameEl.style.display = "none";
-          gameStarted = false;
-        }
-      });
-
-      socket.on("joined", (data) => {
-        console.log("Joined room:", data);
-        wordLength = data.wordLength;
-        maxAttempts = data.maxAttempts;
-        avatars = data.avatars;
-        yourId = data.yourId;
-
-        document.getElementById("roomCode").textContent = data.code;
-        lobbyEl.style.display = "none";
-        gameEl.style.display = "block";
-        showMessage("");
-
-        // Show initial location hint
-        const hintEl = document.getElementById("locationHint");
-        hintEl.textContent = data.locationHint;
-        hintEl.classList.add("visible");
-
-        buildGrid();
-        buildKeyboard();
-        renderAvatars();
-        gameStarted = true;
-      });
-
-      socket.on("playerJoined", (data) => {
-        console.log("Player joined:", data);
-        avatars[data.id] = { seed: data.seed, style: data.style };
-        renderAvatars();
-      });
-
-      socket.on("playerLeft", (data) => {
-        console.log("Player left:", data);
-        delete avatars[data.id];
-        renderAvatars();
-      });
-
-      // Grid building
-      function buildGrid() {
-        console.log("Building grid with wordLength:", wordLength);
-        const grid = document.getElementById("grid");
-        grid.innerHTML = "";
-        grid.style.setProperty("--cols", wordLength);
-
-        for (let r = 0; r < maxAttempts; r++) {
-          const row = document.createElement("div");
-          row.className = "row";
-          for (let c = 0; c < wordLength; c++) {
-            const cell = document.createElement("div");
-            cell.className = "cell";
-            cell.innerHTML = `
-              <div class="inner">
-                <div class="front"></div>
-                <div class="back"></div>
-              </div>`;
-            row.appendChild(cell);
+          if (msg.includes("Room")) {
+            lobbyDiv.style.display = "block";
+            gameDiv.style.display = "none";
+            avatarModal.style.display = "none";
+            gameStarted = false;
           }
-          grid.appendChild(row);
+        });
+
+        // Helper functions
+        function getAvatarSeed(style) {
+          switch (style) {
+            case "adventurer":
+              return "MashaBunny";
+            case "pixel-art":
+              return "SashaDino";
+            case "lorelei":
+              return "NatashaSwan";
+            case "bottts":
+              return "SergikTurtle";
+            default:
+              return style;
+          }
         }
-      }
 
-      // Keyboard building
-      function buildKeyboard() {
-        console.log("Building keyboard");
-        const kb = document.getElementById("keyboard");
-        kb.innerHTML = "";
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((l) => {
-          const btn = document.createElement("button");
-          btn.textContent = l;
-          btn.onclick = () => {
-            if (gameStarted) {
-              const input = document.getElementById("guessInput");
-              if (input.value.length < wordLength) {
-                input.value += l;
-              }
-            }
-          };
-          kb.appendChild(btn);
-        });
-      }
+        function getAvatarSides(style) {
+          switch (style) {
+            case "adventurer":
+              return "8";
+            case "pixel-art":
+              return "5";
+            case "lorelei":
+              return "4";
+            case "bottts":
+              return "6";
+            default:
+              return "6";
+          }
+        }
 
-      // Avatar rendering
-      function renderAvatars() {
-        console.log("Rendering avatars:", avatars);
-        const div = document.getElementById("players");
-        div.innerHTML = "";
-        Object.entries(avatars).forEach(([id, { seed, style, options }]) => {
-          const wrapper = document.createElement("div");
-          wrapper.className = "player";
-          const img = document.createElement("img");
-          const opts = options || {};
-          img.src = `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=${
-            opts.backgroundColor || "b6e3f4"
-          }&accessories=${opts.accessories || "sunglasses"}&clothing=${
-            opts.clothing || "hoodie"
-          }`;
-          img.alt = id;
-          const lbl = document.createElement("span");
-          lbl.textContent = id === yourId ? "YOU" : id.slice(0, 5);
-          addStatusToPlayer(wrapper, true);
-          wrapper.append(img, lbl);
-          div.append(wrapper);
-        });
-      }
+        // Update the renderAvatars function
+        window.renderAvatars = function () {
+          const div = document.getElementById("players");
+          div.innerHTML = "";
+
+          Object.entries(avatars).forEach(([id, { style, options }]) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "player";
+
+            const img = document.createElement("img");
+            const params = new URLSearchParams({
+              seed: getAvatarSeed(style),
+              backgroundColor: options?.backgroundColor || "b6e3f4",
+              eyes: options?.mood === "happy" ? "happy" : "round",
+              radius: "10",
+              scale: "90",
+              mouthProbability: "100",
+              primaryColorLevel: "600",
+              secondaryColorLevel: "400",
+              sidesCount: getAvatarSides(style),
+            });
+
+            img.src = `https://api.dicebear.com/7.x/bottts/svg?${params.toString()}`;
+            img.alt = id;
+
+            const lbl = document.createElement("span");
+            const playerName =
+              Object.entries(playerNames).find(
+                ([name, s]) => s === style
+              )?.[0] || id.slice(0, 5);
+            lbl.textContent =
+              id === yourId ? `YOU (${playerName})` : playerName;
+
+            addStatusToPlayer(wrapper, true);
+            wrapper.append(img, lbl);
+            div.append(wrapper);
+          });
+        };
+      });
+
+      // Predefined player names
+      const playerNames = {
+        Masha: "adventurer",
+        Sasha: "pixel-art",
+        Natasha: "lorelei",
+        SergikTurtle: "bottts",
+      };
 
       // Status dot
       function addStatusToPlayer(wrapper, isOnline) {
@@ -1154,17 +1524,57 @@
         }
       });
 
-      // Handle game over
+      // Add winning celebration effects
+      function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          confetti.style.left = Math.random() * window.innerWidth + "px";
+          confetti.style.top = -10 + "px";
+          confetti.style.backgroundColor = ["#00f2fe", "#4facfe", "#64ffda"][
+            Math.floor(Math.random() * 3)
+          ];
+          confetti.style.animation = `celebrationConfetti ${
+            1 + Math.random() * 2
+          }s linear forwards`;
+          document.body.appendChild(confetti);
+
+          // Remove confetti after animation
+          setTimeout(() => confetti.remove(), 3000);
+        }
+      }
+
+      // Update game over handling
       socket.on("gameOver", ({ winner, answer, locationHint }) => {
         console.log("Game over:", { winner, answer, locationHint });
         gameStarted = false;
-        showMessage(
-          winner === socket.id
-            ? "You win! 🎉"
-            : winner
-            ? "Opponent wins!"
-            : `Game Over! The answer was: ${answer}`
-        );
+
+        if (winner) {
+          // Add winning animation to the last row
+          const rows = Array.from(document.getElementById("grid").children);
+          const lastPlayedRow = rows.find(
+            (row) =>
+              row.querySelector(".cell.revealed") &&
+              !row.nextElementSibling?.querySelector(".cell.revealed")
+          );
+          if (lastPlayedRow) {
+            lastPlayedRow.classList.add("winning-row");
+          }
+
+          // Create celebration effect
+          if (winner === socket.id) {
+            createConfetti();
+            showMessage("🎉 Congratulations! You won! 🎉");
+          } else {
+            const winnerName =
+              Object.entries(playerNames).find(
+                ([name, style]) => avatars[winner]?.style === style
+              )?.[0] || winner.slice(0, 5);
+            showMessage(`${winnerName} wins! The answer was: ${answer}`);
+          }
+        } else {
+          showMessage(`Game Over! The answer was: ${answer}`);
+        }
 
         // Show final location hint
         const hintEl = document.getElementById("locationHint");
@@ -1204,6 +1614,188 @@
           hintEl.classList.add("visible");
         }, 300);
       });
+
+      // Update the existing script to handle stats
+      let gameStats = {
+        gamesPlayed: 0,
+        bestStreak: 0,
+        currentStreak: 0,
+        totalAttempts: 0,
+        gamesWon: 0,
+      };
+
+      // Load stats from localStorage if available
+      try {
+        const savedStats = localStorage.getItem("geoWordleStats");
+        if (savedStats) {
+          gameStats = JSON.parse(savedStats);
+          updateStatsDisplay();
+        }
+      } catch (e) {
+        console.error("Error loading stats:", e);
+      }
+
+      function updateStatsDisplay() {
+        const statsElements = document.querySelectorAll(".stat-value");
+        statsElements[0].textContent = gameStats.gamesPlayed;
+        statsElements[1].textContent = gameStats.bestStreak;
+        statsElements[2].textContent =
+          gameStats.gamesPlayed > 0
+            ? (gameStats.totalAttempts / gameStats.gamesPlayed).toFixed(1)
+            : "-";
+      }
+
+      // Update game over handling to include stats
+      socket.on("gameOver", ({ winner, answer, locationHint }) => {
+        console.log("Game over:", { winner, answer, locationHint });
+        gameStarted = false;
+
+        // Update stats
+        gameStats.gamesPlayed++;
+        if (winner === socket.id) {
+          gameStats.gamesWon++;
+          gameStats.currentStreak++;
+          gameStats.bestStreak = Math.max(
+            gameStats.bestStreak,
+            gameStats.currentStreak
+          );
+          createConfetti();
+          showMessage("🎉 Congratulations! You won! 🎉");
+        } else {
+          gameStats.currentStreak = 0;
+          const winnerName =
+            Object.entries(playerNames).find(
+              ([name, style]) => avatars[winner]?.style === style
+            )?.[0] || winner.slice(0, 5);
+          showMessage(`${winnerName} wins! The answer was: ${answer}`);
+        }
+
+        // Update attempts
+        const currentAttempts = rooms[currentRoom]?.attempts[socket.id] || 0;
+        gameStats.totalAttempts += currentAttempts;
+
+        // Save stats
+        localStorage.setItem("geoWordleStats", JSON.stringify(gameStats));
+        updateStatsDisplay();
+
+        // Show final hint and animations
+        const hintEl = document.getElementById("locationHint");
+        hintEl.textContent = locationHint;
+        hintEl.classList.add("visible");
+
+        // Add winning animations if applicable
+        if (winner) {
+          const rows = Array.from(document.getElementById("grid").children);
+          const lastPlayedRow = rows.find(
+            (row) =>
+              row.querySelector(".cell.revealed") &&
+              !row.nextElementSibling?.querySelector(".cell.revealed")
+          );
+          if (lastPlayedRow) {
+            lastPlayedRow.classList.add("winning-row");
+          }
+        }
+      });
+
+      // Socket connection handlers
+      socket.on("connect", () => {
+        console.log("Connected to server");
+        showMessage("");
+      });
+
+      socket.on("connect_error", (error) => {
+        console.error("Connection error:", error);
+        showMessage("Connection error. Please try again.");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Disconnected from server");
+        showMessage("Disconnected from server. Trying to reconnect...");
+      });
+
+      // Player join/leave handlers
+      socket.on("playerJoined", (data) => {
+        console.log("Player joined:", data);
+        avatars[data.id] = { seed: data.seed, style: data.style };
+        renderAvatars();
+      });
+
+      socket.on("playerLeft", (data) => {
+        console.log("Player left:", data);
+        delete avatars[data.id];
+        renderAvatars();
+      });
+
+      // Chat handlers
+      socket.on("chatMessage", (message) => {
+        const messages = document.getElementById("messages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "chat-message";
+
+        const timeStr = message.timestamp
+          ? `<span class="timestamp">${new Date(
+              message.timestamp
+            ).toLocaleTimeString()}</span>`
+          : "";
+
+        messageDiv.innerHTML = `<strong>${message.user}:</strong> ${message.text} ${timeStr}`;
+        messages.appendChild(messageDiv);
+        messages.scrollTop = messages.scrollHeight;
+      });
+
+      const chatInput = document.getElementById("chatInput");
+      if (chatInput) {
+        chatInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter" && chatInput.value.trim()) {
+            socket.emit("chatMessage", chatInput.value.trim());
+            chatInput.value = "";
+          }
+        });
+      }
+
+      // Grid building function
+      function buildGrid() {
+        console.log("Building grid with wordLength:", wordLength);
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        grid.style.setProperty("--cols", wordLength);
+
+        for (let r = 0; r < maxAttempts; r++) {
+          const row = document.createElement("div");
+          row.className = "row";
+          for (let c = 0; c < wordLength; c++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.innerHTML = `
+              <div class="inner">
+                <div class="front"></div>
+                <div class="back"></div>
+              </div>`;
+            row.appendChild(cell);
+          }
+          grid.appendChild(row);
+        }
+      }
+
+      // Keyboard building function
+      function buildKeyboard() {
+        console.log("Building keyboard");
+        const kb = document.getElementById("keyboard");
+        kb.innerHTML = "";
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((l) => {
+          const btn = document.createElement("button");
+          btn.textContent = l;
+          btn.onclick = () => {
+            if (gameStarted) {
+              const input = document.getElementById("guessInput");
+              if (input.value.length < wordLength) {
+                input.value += l;
+              }
+            }
+          };
+          kb.appendChild(btn);
+        });
+      }
     </script>
   </body>
 </html>

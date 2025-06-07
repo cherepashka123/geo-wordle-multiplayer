@@ -1,64 +1,71 @@
 # Geo Wordle Multiplayer
 
-A multiplayer geography-based word guessing game where players can guess countries and capital cities. Features include:
-
-- Real-time multiplayer gameplay
-- Custom avatars with DiceBear integration
-- Interactive hints and location clues
-- Chat functionality
-- Beautiful cyberpunk-inspired UI
+A multiplayer geography-based Wordle game where players can compete to guess countries and cities. Features real-time multiplayer gameplay, custom avatars, and a beautiful neon-themed UI.
 
 ## Features
 
-- **Multiple Game Modes:**
-
-  - Countries
-  - Capital Cities
-  - Both Combined
-
-- **Customizable Avatars:**
-
-  - Multiple avatar styles
-  - Customizable features
-  - Real-time preview
-
-- **Interactive Gameplay:**
-  - Letter hints
-  - Location clues
-  - Real-time feedback
-  - Multiplayer chat
+- 🌍 Guess countries and cities
+- 👥 Real-time multiplayer
+- 🎮 Custom character selection
+- 🎨 Beautiful neon-themed UI
+- 💬 In-game chat
+- 📊 Game statistics
+- 💡 Helpful hints system
 
 ## Tech Stack
 
 - Node.js
 - Express
 - Socket.IO
-- DiceBear API
+- HTML5/CSS3
+- Vanilla JavaScript
+- DiceBear Avatars API
 
-## Running Locally
+## Getting Started
 
-1. Install dependencies:
+### Prerequisites
+
+- Node.js >= 18.0.0
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/cherepashka123/geo-wordle-multiplayer.git
+cd geo-wordle-multiplayer
+```
+
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. Start the server:
+3. Start the development server:
 
 ```bash
-npm start
+npm run dev
 ```
 
-3. Open http://localhost:3000 in your browser
+4. Open http://localhost:3000 in your browser
 
 ## Playing the Game
 
-1. Create a room or join with a room code
-2. Customize your avatar
-3. Start guessing countries or capitals
-4. Use hints and chat with other players
-5. Try to guess the word in 6 attempts or less
+1. Create a new room or join an existing one with a room code
+2. Choose your character avatar and customize it
+3. Wait for other players to join
+4. Start guessing countries or cities!
 
 ## Deployment
 
-The game is deployed on Vercel and can be played online.
+The game is deployed on Vercel and can be played at: [Geo Wordle Multiplayer](https://geo-wordle-multiplayer.vercel.app)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+[@cherepashka123](https://github.com/cherepashka123)
