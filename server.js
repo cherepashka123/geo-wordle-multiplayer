@@ -8,17 +8,23 @@ const capitals = require("./capitals.json");
 
 const app = express();
 const server = http.createServer(app);
+
+// Configure Socket.IO with proper CORS for Vercel
 const io = new Server(server, {
   cors: {
-    origin: process.env.VERCEL_URL
-      ? [`https://${process.env.VERCEL_URL}`, /\.vercel\.app$/]
-      : ["http://localhost:3000"],
+    origin: "*", // Be more permissive with CORS in development
     methods: ["GET", "POST"],
     credentials: true,
   },
-  path: "/socket.io",
-  addTrailingSlash: false,
+  path: "/socket.io/",
   transports: ["websocket", "polling"],
+  allowEIO3: true, // Allow Engine.IO version 3 clients
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  res.status(500).json({ error: "Internal Server Error" });
 });
 
 // serve static
@@ -335,6 +341,16 @@ io.on("connection", (socket) => {
       rooms.delete(currentRoom);
     }
   });
+
+  // Error handling for socket.io
+  socket.on("error", (error) => {
+    console.error("Socket Error:", error);
+  });
+});
+
+// Error handling for socket.io
+io.on("error", (error) => {
+  console.error("Socket.IO Error:", error);
 });
 
 // Handle root route
@@ -342,16 +358,19 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Add after the root route and before the server start
+// Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Start server if not in Vercel environment
-if (!process.env.VERCEL_URL) {
-  const PORT = process.env.PORT || 3000;
-  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
-
 // Export for Vercel
-module.exports = server;
+if (process.env.VERCEL) {
+  // In Vercel, we export the handler
+  module.exports = server;
+} else {
+  // Local development
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
